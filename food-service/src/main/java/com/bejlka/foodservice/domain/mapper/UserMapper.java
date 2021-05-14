@@ -11,17 +11,15 @@ import java.util.List;
 public interface UserMapper {
 
     UserDTO map(User user);
-//
-//    @Mapping(target = "userDTO", ignore = true)
-//    CartDTO cartToDTO(Cart cart);
-//
-//    @Mapping(target = "restaurantDTO", ignore = true)
-//    List<MenuItemDTO> menuItemToDTO(List<MenuItem> items);
-//
-//    @Mapping(target = "userDTO", ignore = true)
-//    List<OrderDTO> orderToDTO(List<Order> orderList);
-//
-//    @Mapping(target = "items", ignore = true)
-//    RestaurantDTO restaurantToDTO(Restaurant restaurant);
+
+    @Mapping(target = "user", ignore = true)
+    CartDTO map(Cart cart);
+
+    @Mapping(target = "restaurant", ignore = true)
+    MenuItemDTO map(MenuItem menuItem);
+
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "restaurant.items", ignore = true)
+    OrderDTO map(Order order);
 
 }

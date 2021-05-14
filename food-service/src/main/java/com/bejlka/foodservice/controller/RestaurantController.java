@@ -38,8 +38,8 @@ public class RestaurantController {
     }
 
     @PutMapping("/{id}/menu")
-    public void createAndAddMenuItem(@PathVariable("id") Restaurant restaurant, @RequestBody MenuItem menuItem) {
-        restaurantService.createAndAddMenuItem(restaurant, menuItem);
+    public RestaurantDTO createAndAddMenuItem(@PathVariable("id") Restaurant restaurant, @RequestBody MenuItem menuItem) {
+        return restaurantService.createAndAddMenuItem(restaurant, menuItem);
     }
 
     @DeleteMapping("/{id}/menu")

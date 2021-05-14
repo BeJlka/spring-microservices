@@ -4,6 +4,7 @@ import com.bejlka.foodservice.domain.dto.OrderDTO;
 import com.bejlka.foodservice.domain.entity.MenuItem;
 import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.domain.entity.User;
+import com.bejlka.foodservice.domain.enums.Status;
 import com.bejlka.foodservice.domain.mapper.OrderMapper;
 import com.bejlka.foodservice.exeption.OrderNotFound;
 import com.bejlka.foodservice.repository.OrderRepository;
@@ -31,6 +32,7 @@ public class OrderService {
         order.setAmount(order.getItems().stream().mapToDouble(MenuItem::getPrice).sum());
         order.setRestaurant(user.getCart().getItems().get(0).getRestaurant());
         order.setOrderDate(Instant.now());
+        order.setStatus(Status.CREATE);
         cartService.removeItems(user.getCart());
         return orderRepository.save(order);
     }

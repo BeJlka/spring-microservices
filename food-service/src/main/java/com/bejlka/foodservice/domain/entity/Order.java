@@ -1,4 +1,6 @@
 package com.bejlka.foodservice.domain.entity;
+import com.bejlka.foodservice.domain.enums.Role;
+import com.bejlka.foodservice.domain.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +35,9 @@ public class Order {
 
     private Instant orderDate;
     private Instant deliveryDate;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @ManyToMany
     private List<MenuItem> items = new ArrayList<>();

@@ -1,5 +1,7 @@
 package com.bejlka.foodservice.domain.dto;
 
+import com.bejlka.foodservice.domain.enums.Status;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,13 +12,15 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDTO {
     private Long id;
-    private UserDTO userDTO;
-    private RestaurantDTO restaurantDTO;
+    private UserDTO user;
+    private RestaurantDTO restaurant;
     private String address;
     private double amount;
     private Instant orderDate;
     private Instant deliveryDate;
+    private Status status;
     private List<MenuItemDTO> items;
 }

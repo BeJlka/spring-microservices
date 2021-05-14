@@ -44,12 +44,12 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
-    public void createAndAddMenuItem(Restaurant restaurant, MenuItem menuItem) {
+    public RestaurantDTO createAndAddMenuItem(Restaurant restaurant, MenuItem menuItem) {
         MenuItem saveMenuItem = menuItemService.createMenuItem(menuItem);
         restaurant.getItems().add(saveMenuItem);
         saveMenuItem.setRestaurant(restaurant);
         menuItemService.updateMenuItem(saveMenuItem);
-        restaurantRepository.save(restaurant);
+        return restaurantMapper.map(restaurantRepository.save(restaurant));
     }
 
     public void removeMenuItem(Restaurant restaurant, MenuItem menuItem) {

@@ -54,6 +54,5 @@ public class CartService {
     public void removeItems(Cart cart) {
         cart.setItems(new ArrayList<>());
         cartRepository.save(cart);
-
     }
 }
