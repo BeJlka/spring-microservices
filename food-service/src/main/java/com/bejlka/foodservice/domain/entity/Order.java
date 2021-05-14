@@ -14,7 +14,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tbl_order")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORDER_SEQ")
@@ -33,13 +32,15 @@ public class Order {
 
     private double amount;
 
+//    private boolean payment;
+
     private Instant orderDate;
     private Instant deliveryDate;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToMany
-    private List<MenuItem> items = new ArrayList<>();
+    @OneToMany
+    private List<OrderItem> items = new ArrayList<>();
 
 }

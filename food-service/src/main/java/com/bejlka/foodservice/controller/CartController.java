@@ -40,8 +40,8 @@ public class CartController {
     }
 
     @DeleteMapping("/item/{id}")
-    public void removeItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") MenuItem menuItem) {
-        cartService.removeItem(userService.getUserByLogin(securityUser.getLogin()).getCart(), menuItem);
+    public void removeItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
+        cartService.removeItem(userService.getUserByLogin(securityUser.getLogin()).getCart(), id);
     }
 
     @DeleteMapping("/items")

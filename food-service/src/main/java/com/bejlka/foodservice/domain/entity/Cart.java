@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tbl_cart")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CART_SEQ")
@@ -24,5 +23,5 @@ public class Cart {
     private User user;
 
     @OneToMany
-    private List<MenuItem> items = new ArrayList<>();
+    private List<CartItem> items = new ArrayList<>();
 }

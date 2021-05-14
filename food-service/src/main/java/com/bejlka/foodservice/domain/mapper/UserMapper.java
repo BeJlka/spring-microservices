@@ -9,7 +9,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-
     UserDTO map(User user);
 
     @Mapping(target = "user", ignore = true)
@@ -21,5 +20,4 @@ public interface UserMapper {
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "restaurant.items", ignore = true)
     OrderDTO map(Order order);
-
 }

@@ -8,7 +8,9 @@ import com.bejlka.foodservice.exeption.CartIsEmpty;
 import com.bejlka.foodservice.exeption.LoginBusy;
 import com.bejlka.foodservice.exeption.UserNotFound;
 import com.bejlka.foodservice.repository.UserRepository;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,14 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final OrderService orderService;
-    private final CartService cartService;
-    private final UserMapper userMapper;
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+    OrderService orderService;
+    CartService cartService;
+    UserMapper userMapper;
 
     public User getUserById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);

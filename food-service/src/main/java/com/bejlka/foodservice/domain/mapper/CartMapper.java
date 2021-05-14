@@ -16,5 +16,5 @@ public interface CartMapper {
     CartDTO map(Cart cart);
 
     @Mapping(target = "restaurant.items", ignore = true)
-    MenuItemDTO map (MenuItem menuItem);
+    MenuItemDTO map(MenuItem menuItem);
 }

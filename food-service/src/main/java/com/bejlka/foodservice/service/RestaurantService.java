@@ -8,7 +8,9 @@ import com.bejlka.foodservice.domain.mapper.MenuItemMapper;
 import com.bejlka.foodservice.domain.mapper.RestaurantMapper;
 import com.bejlka.foodservice.exeption.NameBusy;
 import com.bejlka.foodservice.repository.RestaurantRepository;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,12 +19,13 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RestaurantService {
 
-    private final RestaurantRepository restaurantRepository;
-    private final MenuItemService menuItemService;
-    private final RestaurantMapper restaurantMapper;
-    private final MenuItemMapper menuItemMapper;
+    RestaurantRepository restaurantRepository;
+    MenuItemService menuItemService;
+    RestaurantMapper restaurantMapper;
+    MenuItemMapper menuItemMapper;
 
     public RestaurantDTO getRestaurant(Restaurant restaurant) {
         return restaurantMapper.map(restaurant);

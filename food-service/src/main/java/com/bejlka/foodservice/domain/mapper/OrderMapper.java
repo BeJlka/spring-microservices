@@ -15,5 +15,5 @@ public interface OrderMapper {
     OrderDTO map(Order order);
 
     @Mapping(target = "restaurant", ignore = true)
-    MenuItemDTO map (MenuItem menuItem);
+    MenuItemDTO map(MenuItem menuItem);
 }

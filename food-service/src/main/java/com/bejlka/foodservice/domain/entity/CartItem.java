@@ -6,18 +6,26 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuItem {
+@Entity
+public class CartItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MENU_SEQ")
-    @SequenceGenerator(sequenceName = "menu_seq", allocationSize = 1, name = "MENU_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cao_seq")
+    @SequenceGenerator(sequenceName = "cao_seq", allocationSize = 1, name = "cao_seq")
     private Long id;
     private String name;
     private double price;
-
     @ManyToOne
     private Restaurant restaurant;
+    private int count;
+
+    public void increment() {
+        this.count++;
+    }
+
+    public void decrement() {
+        this.count--;
+    }
 }

@@ -5,17 +5,20 @@ import com.bejlka.foodservice.domain.entity.MenuItem;
 import com.bejlka.foodservice.domain.mapper.MenuItemMapper;
 import com.bejlka.foodservice.exeption.MenuItemNotFound;
 import com.bejlka.foodservice.repository.MenuItemRepository;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MenuItemService {
 
-    private final MenuItemRepository menuItemRepository;
-    private final MenuItemMapper menuItemMapper;
+    MenuItemRepository menuItemRepository;
+    MenuItemMapper menuItemMapper;
 
     public MenuItem findMenuById(Long id) {
         Optional<MenuItem> optionalMenuItem = menuItemRepository.findById(id);

@@ -2,15 +2,18 @@ package com.bejlka.foodservice.service;
 
 import com.bejlka.foodservice.feign.DeliveryServiceClient;
 import com.bejlka.foodservice.feign.PaymentServiceClient;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FeignService {
 
-    private final DeliveryServiceClient deliveryServiceClient;
-    private final PaymentServiceClient paymentServiceClient;
+    DeliveryServiceClient deliveryServiceClient;
+    PaymentServiceClient paymentServiceClient;
 
 
     public String getAll() {
