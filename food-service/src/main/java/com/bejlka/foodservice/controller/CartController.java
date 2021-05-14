@@ -23,7 +23,6 @@ public class CartController {
 
     private final CartService cartService;
     private final UserService userService;
-    private final MenuItemService menuItemService;
 
     @GetMapping()
     public CartDTO getCurrentCart(@AuthenticationPrincipal SecurityUser securityUser) {
@@ -36,13 +35,13 @@ public class CartController {
     }
 
     @PutMapping("/item/{id}")
-    public Integer addItem(@RequestBody Long menuId, @PathVariable("id") Long id) {
-        return cartService.addItem(menuItemService.findMenuById(menuId), userService.getUserById(id));
+    public Integer addItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") MenuItem menuItem) {
+        return cartService.addItem(userService.getUserByLogin(securityUser.getLogin()).getCart(), menuItem);
     }
 
     @DeleteMapping("/item/{id}")
-    public void removeItem(@PathVariable("id") Cart cart, @RequestBody MenuItem menuItem) {
-        cartService.removeItem(cart, menuItem);
+    public void removeItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") MenuItem menuItem) {
+        cartService.removeItem(userService.getUserByLogin(securityUser.getLogin()).getCart(), menuItem);
     }
 
     @DeleteMapping("/items")

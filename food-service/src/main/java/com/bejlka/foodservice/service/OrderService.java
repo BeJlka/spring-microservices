@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final CartService cartService;
     private final OrderMapper orderMapper;
 
     public Order createOrder(User user) {
@@ -28,8 +29,9 @@ public class OrderService {
         order.setAddress(user.getAddress());
         order.setItems(user.getCart().getItems());
         order.setAmount(order.getItems().stream().mapToDouble(MenuItem::getPrice).sum());
-        order.setRestaurant(user.getCart().getRestaurant());
+        order.setRestaurant(user.getCart().getItems().get(0).getRestaurant());
         order.setOrderDate(Instant.now());
+        cartService.removeItems(user.getCart());
         return orderRepository.save(order);
     }
 

@@ -34,7 +34,7 @@ public class Order {
     private Instant orderDate;
     private Instant deliveryDate;
 
-    @OneToMany
+    @ManyToMany
     private List<MenuItem> items = new ArrayList<>();
 
 }

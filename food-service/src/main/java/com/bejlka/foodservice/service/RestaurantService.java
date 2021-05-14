@@ -44,8 +44,17 @@ public class RestaurantService {
         restaurantRepository.save(restaurant);
     }
 
-    public void addMenuItem(Restaurant restaurant, MenuItem menuItem) {
-        restaurant.getItems().add(menuItemService.createMenuItem(menuItem));
+    public void createAndAddMenuItem(Restaurant restaurant, MenuItem menuItem) {
+        MenuItem saveMenuItem = menuItemService.createMenuItem(menuItem);
+        restaurant.getItems().add(saveMenuItem);
+        saveMenuItem.setRestaurant(restaurant);
+        menuItemService.updateMenuItem(saveMenuItem);
+        restaurantRepository.save(restaurant);
+    }
+
+    public void removeMenuItem(Restaurant restaurant, MenuItem menuItem) {
+        restaurant.getItems().remove(menuItem);
+        menuItemService.deleteMenuItem(menuItem.getId());
         restaurantRepository.save(restaurant);
     }
 

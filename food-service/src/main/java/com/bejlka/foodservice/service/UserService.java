@@ -4,10 +4,12 @@ import com.bejlka.foodservice.domain.dto.UserDTO;
 import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.enums.Role;
 import com.bejlka.foodservice.domain.mapper.UserMapper;
+import com.bejlka.foodservice.exeption.CartIsEmpty;
 import com.bejlka.foodservice.exeption.LoginBusy;
 import com.bejlka.foodservice.exeption.UserNotFound;
 import com.bejlka.foodservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final OrderService orderService;
     private final CartService cartService;
     private final UserMapper userMapper;
@@ -30,9 +33,11 @@ public class UserService {
     }
 
     public void createOrder(User user) {
+        if (user.getCart().getItems().size() == 0) {
+            throw new CartIsEmpty("В корзине ничего нет");
+        }
         user.getOrderList().add(orderService.createOrder(user));
         updateUser(user);
-        cartService.removeItems(user.getCart());
     }
 
     public User getUserByLogin(String login) {
@@ -54,6 +59,7 @@ public class UserService {
         }
         user.setCart(cartService.createCart());
         user.setRole(Role.USER);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user).getId();
     }
 

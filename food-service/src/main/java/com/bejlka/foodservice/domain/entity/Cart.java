@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Table(name = "tbl_cart")
 public class Cart {
     @Id
@@ -23,9 +22,6 @@ public class Cart {
 
     @OneToOne(mappedBy = "cart")
     private User user;
-
-    @ManyToOne
-    private Restaurant restaurant;
 
     @OneToMany
     private List<MenuItem> items = new ArrayList<>();
