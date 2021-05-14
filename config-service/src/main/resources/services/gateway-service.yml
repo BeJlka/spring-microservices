@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: food-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/food/**
+          filters:
+            - RewritePath=/food/(?<path>.*), /$\{path}
+        - id: payment-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/payment/**
+          filters:
+            - RewritePath=/payment/(?<path>.*), /$\{path}
+        - id: delivery-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/delivery/**
+          filters:
+            - RewritePath=/delivery/(?<path>.*), /$\{path}
+
+server:
+  port: 8989
