@@ -1,8 +1,6 @@
 package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.domain.dto.OrderDTO;
-import com.bejlka.foodservice.exeption.OrderNotFound;
-import com.bejlka.foodservice.exeption.UserNotFound;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.OrderService;
 import com.bejlka.foodservice.service.UserService;
@@ -32,4 +30,9 @@ public class OrderController {
     public OrderDTO getOrder(@PathVariable Long id) {
         return orderService.getOrder(id);
     }
+
+//    @PutMapping("/{id}")
+//    public void addItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") MenuItem menuItem) {
+//        orderService.addItem(userService.getUserByLogin(securityUser.getLogin()), menuItem);
+//    }
 }

@@ -4,20 +4,18 @@ import com.bejlka.foodservice.domain.dto.*;
 import com.bejlka.foodservice.domain.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CartMapper.class, OrderMapper.class})
 public interface UserMapper {
-    UserDTO map(User user);
+    @Mapping(target = "cart", qualifiedByName = "user.cart")
+    @Mapping(target = "orders", qualifiedByName = "user.orders")
+    UserDTO userToDTO(User user);
 
-    @Mapping(target = "user", ignore = true)
-    CartDTO map(Cart cart);
-
-    @Mapping(target = "restaurant", ignore = true)
-    MenuItemDTO map(MenuItem menuItem);
-
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "restaurant.items", ignore = true)
-    OrderDTO map(Order order);
+    @Named("order.user")
+    @Mapping(target = "cart", ignore = true)
+    @Mapping(target = "orders", ignore = true)
+    UserDTO orderUserToDTO(User user);
 }

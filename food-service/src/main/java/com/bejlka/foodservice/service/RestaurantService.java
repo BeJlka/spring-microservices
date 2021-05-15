@@ -6,11 +6,12 @@ import com.bejlka.foodservice.domain.entity.MenuItem;
 import com.bejlka.foodservice.domain.entity.Restaurant;
 import com.bejlka.foodservice.domain.mapper.MenuItemMapper;
 import com.bejlka.foodservice.domain.mapper.RestaurantMapper;
-import com.bejlka.foodservice.exeption.NameBusy;
+import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.RestaurantRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class RestaurantService {
     MenuItemMapper menuItemMapper;
 
     public RestaurantDTO getRestaurant(Restaurant restaurant) {
-        return restaurantMapper.map(restaurant);
+        return restaurantMapper.restaurantToDTO(restaurant);
     }
 
     public List<MenuItemDTO> getAllMenuItem(Restaurant restaurant) {
@@ -38,7 +39,7 @@ public class RestaurantService {
     public Long createRestaurant(Restaurant restaurant) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findByName(restaurant.getName());
         if (optionalRestaurant.isPresent()){
-            throw new NameBusy("Данное название ресторана занято");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Данное название ресторана занято");
         }
         return restaurantRepository.save(restaurant).getId();
     }
@@ -52,7 +53,7 @@ public class RestaurantService {
         restaurant.getItems().add(saveMenuItem);
         saveMenuItem.setRestaurant(restaurant);
         menuItemService.updateMenuItem(saveMenuItem);
-        return restaurantMapper.map(restaurantRepository.save(restaurant));
+        return restaurantMapper.restaurantToDTO(restaurantRepository.save(restaurant));
     }
 
     public void removeMenuItem(Restaurant restaurant, MenuItem menuItem) {

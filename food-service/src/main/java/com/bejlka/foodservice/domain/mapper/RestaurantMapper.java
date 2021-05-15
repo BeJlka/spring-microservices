@@ -6,11 +6,15 @@ import com.bejlka.foodservice.domain.entity.MenuItem;
 import com.bejlka.foodservice.domain.entity.Restaurant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {MenuItemMapper.class})
 public interface RestaurantMapper {
-    RestaurantDTO map(Restaurant restaurant);
+    @Mapping(target = "items", qualifiedByName = "restaurant.items")
+    RestaurantDTO restaurantToDTO(Restaurant restaurant);
 
-    @Mapping(target = "restaurant", ignore = true)
-    MenuItemDTO map(MenuItem menuItem);
+    @Named("items.restaurant")
+    @Mapping(target = "items", ignore = true)
+    RestaurantDTO itemRestaurantToDTO(Restaurant restaurant);
+
 }

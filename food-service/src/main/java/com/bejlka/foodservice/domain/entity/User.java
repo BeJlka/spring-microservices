@@ -30,9 +30,9 @@ public class User{
     private Role role;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cart_id")
+    @JoinColumn(name = "id")
     private Cart cart;
 
-    @OneToMany
-    private List<Order> orderList;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Order> orders;
 }

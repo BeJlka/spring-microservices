@@ -16,8 +16,16 @@ public class OrderItem {
     @SequenceGenerator(sequenceName = "orderitem_seq", allocationSize = 1, name = "orderitem_seq")
     private Long id;
     private String name;
-    private double price;
+    private Double price;
     @ManyToOne
     private Restaurant restaurant;
-    private int count;
+    private Integer count = 1;
+
+    public void increment() {
+        this.count++;
+    }
+
+    public void decrement() {
+        this.count--;
+    }
 }

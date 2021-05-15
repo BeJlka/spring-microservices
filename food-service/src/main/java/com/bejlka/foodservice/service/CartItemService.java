@@ -1,5 +1,6 @@
 package com.bejlka.foodservice.service;
 
+import com.bejlka.foodservice.domain.entity.Cart;
 import com.bejlka.foodservice.domain.entity.CartItem;
 import com.bejlka.foodservice.domain.entity.MenuItem;
 import com.bejlka.foodservice.repository.CartItemRepository;
@@ -17,31 +18,36 @@ import java.util.Optional;
 public class CartItemService {
     CartItemRepository cartItemRepository;
 
-    public CartItem create(MenuItem menuItem) {
-        Optional<CartItem> optionalCartItem = cartItemRepository.findById(menuItem.getId());
-        if (optionalCartItem.isPresent()) {
-            optionalCartItem.get().increment();
-            return cartItemRepository.save(optionalCartItem.get());
-        } else {
-            CartItem cartItem = new CartItem();
-            cartItem.setRestaurant(menuItem.getRestaurant());
-            cartItem.setCount(1);
-            cartItem.setPrice(menuItem.getPrice());
-            cartItem.setName(menuItem.getName());
-            return cartItemRepository.save(cartItem);
-        }
+    public Optional<CartItem> findCartItem(Cart cart, MenuItem menuItem) {
+        return cartItemRepository.findByUserIdAndMenuId(cart.getUserId(), menuItem.getId());
     }
 
-    public void remove(MenuItem menuItem) {
-        Optional<CartItem> optionalCartItem = cartItemRepository.findById(menuItem.getId());
-        if(optionalCartItem.isPresent()) {
-            CartItem cartItem = optionalCartItem.get();
-            if (cartItem.getCount() > 1) {
-                cartItem.decrement();
-                cartItemRepository.save(cartItem);
-            } else {
-                cartItemRepository.delete(cartItem);
-            }
-        }
+    public void increment(CartItem cartItem) {
+        cartItem.increment();
+        cartItemRepository.save(cartItem);
+    }
+
+    public void decrement(CartItem cartItem) {
+        cartItem.decrement();
+        cartItemRepository.save(cartItem);
+    }
+
+    public CartItem create(Cart cart, MenuItem menuItem) {
+        CartItem cartItem = new CartItem();
+        cartItem.setUserId(cart.getUserId());
+        cartItem.setMenuId(menuItem.getId());
+        cartItem.setRestaurant(menuItem.getRestaurant());
+        cartItem.setCount(1);
+        cartItem.setPrice(menuItem.getPrice());
+        cartItem.setName(menuItem.getName());
+        return cartItemRepository.save(cartItem);
+    }
+
+    public void remove(CartItem cartItem) {
+        cartItemRepository.delete(cartItem);
+    }
+
+    public void removeAll(List<CartItem> items) {
+        cartItemRepository.deleteAll(items);
     }
 }

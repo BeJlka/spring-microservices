@@ -10,16 +10,17 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@IdClass(CartItemId.class)
 public class CartItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cao_seq")
-    @SequenceGenerator(sequenceName = "cao_seq", allocationSize = 1, name = "cao_seq")
-    private Long id;
+    private Long userId;
+    @Id
+    private Long menuId;
     private String name;
-    private double price;
+    private Double price;
     @ManyToOne
     private Restaurant restaurant;
-    private int count;
+    private Integer count;
 
     public void increment() {
         this.count++;
@@ -29,3 +30,4 @@ public class CartItem {
         this.count--;
     }
 }
+

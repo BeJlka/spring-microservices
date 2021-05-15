@@ -1,17 +1,13 @@
 package com.bejlka.foodservice.controller;
 
+import com.bejlka.foodservice.domain.dto.UserDTO;
 import com.bejlka.foodservice.domain.entity.User;
-import com.bejlka.foodservice.domain.mapper.UserMapper;
-import com.bejlka.foodservice.exeption.UserNotFound;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.FeignService;
 import com.bejlka.foodservice.service.UserService;
-import com.bejlka.foodservice.domain.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/user")

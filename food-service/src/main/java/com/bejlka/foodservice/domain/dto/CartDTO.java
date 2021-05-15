@@ -12,7 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CartDTO {
-    private Long id;
-    private UserDTO user;
-    private List<MenuItemDTO> items;
+    private List<CartItemDTO> items;
 }

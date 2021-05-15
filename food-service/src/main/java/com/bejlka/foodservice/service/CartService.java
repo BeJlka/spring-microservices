@@ -1,18 +1,23 @@
 package com.bejlka.foodservice.service;
 
 import com.bejlka.foodservice.domain.dto.CartDTO;
-import com.bejlka.foodservice.domain.dto.MenuItemDTO;
-import com.bejlka.foodservice.domain.entity.*;
+import com.bejlka.foodservice.domain.dto.CartItemDTO;
+import com.bejlka.foodservice.domain.entity.Cart;
+import com.bejlka.foodservice.domain.entity.CartItem;
+import com.bejlka.foodservice.domain.entity.MenuItem;
+import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.mapper.CartMapper;
-import com.bejlka.foodservice.exeption.NotMatch;
+import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.CartRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,46 +26,66 @@ public class CartService {
 
     CartRepository cartRepository;
     CartItemService cartItemService;
-    MenuItemService menuItemService;
     CartMapper cartMapper;
 
-    public Cart createCart() {
-        return cartRepository.save(new Cart());
+    public Cart createCart(Long id) {
+        Cart cart = new Cart();
+        cart.setUserId(id);
+        return cartRepository.save(cart);
     }
 
     public CartDTO getCart(Cart cart) {
-        return cartMapper.map(cart);
+        return cartMapper.cartToDTO(cart);
     }
 
-    public List<MenuItemDTO> getAllMenuItems(Cart cart) {
-        return cartMapper.map(cart).getItems();
+    public List<CartItemDTO> getAllMenuItems(Cart cart) {
+        return cartMapper.cartToDTO(cart).getItems();
     }
 
-    public Integer addItem(Cart cart, MenuItem menuItem) {
-        if (cart.getItems().size() > 0) {
-            Restaurant restaurant = cart.getItems().get(cart.getItems().size() - 1).getRestaurant();
-            if (!restaurant.getId().equals(menuItem.getRestaurant().getId())) {
-                throw new NotMatch("Блюда из разных ресторанов");
+    public CartDTO addItem(User user, MenuItem menuItem) {
+        Cart cart = user.getCart();
+        if (cart == null) {
+            cart = createCart(user.getId());
+        }
+        Optional<CartItem> optionalCartItem = cartItemService.findCartItem(cart, menuItem);
+        if (optionalCartItem.isPresent()) {
+            cartItemService.increment(optionalCartItem.get());
+        } else {
+            if (cart.getItems().isEmpty() || cart.getItems().get(0).getRestaurant().equals(menuItem.getRestaurant())) {
+                cart.getItems().add(cartItemService.create(cart, menuItem));
+                cartRepository.save(cart);
+            } else {
+                throw new CustomException(HttpStatus.BAD_REQUEST, "Очистите корзину прежде чем добавлять данный товар в нее");
             }
         }
-//        cart.getItems().add(menuItem);
-        CartItem cartItem = cartItemService.create(menuItem);
-        cart.getItems().add(cartItem);
+        return cartMapper.cartToDTO(cart);
+    }
+
+    public void remove(User user, MenuItem menuItem) {
+        Cart cart = user.getCart();
+        if (cart == null || cart.getItems().isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Корзина пустая");
+        }
+        Optional<CartItem> optionalCartItem = cartItemService.findCartItem(cart, menuItem);
+        if (optionalCartItem.isPresent()) {
+            CartItem cartItem = optionalCartItem.get();
+            if (cartItem.getCount() > 1) {
+                cartItemService.decrement(cartItem);
+            } else {
+                cart.getItems().remove(cartItem);
+                cartItemService.remove(cartItem);
+            }
+        }
         cartRepository.save(cart);
-        return cart.getItems().indexOf(cartItem);
     }
 
-    public void removeItem(Cart cart, Long id) {
-        cartItemService.remove(menuItemService.findMenuById(id));
-//        if (cart.getItems().size() < id) {
-//            throw new NotMatch("Id выходит за пределы корзины");
-//        }
-//        cart.getItems().remove(id-1);
-//        cartRepository.save(cart);
-    }
-
-    public void removeItems(Cart cart) {
+    public void removeAll(Cart cart) {
+        if (cart.getItems().isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Корзина пустая");
+        }
+        List<CartItem> items = cart.getItems();
         cart.setItems(new ArrayList<>());
+        cartItemService.removeAll(items);
         cartRepository.save(cart);
     }
 }

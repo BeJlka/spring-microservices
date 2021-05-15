@@ -1,5 +1,4 @@
 package com.bejlka.foodservice.domain.entity;
-import com.bejlka.foodservice.domain.enums.Role;
 import com.bejlka.foodservice.domain.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORDER_SEQ")
@@ -30,9 +30,9 @@ public class Order {
 
     private String address;
 
-    private double amount;
+    private Double amount;
 
-//    private boolean payment;
+    private boolean payment;
 
     private Instant orderDate;
     private Instant deliveryDate;

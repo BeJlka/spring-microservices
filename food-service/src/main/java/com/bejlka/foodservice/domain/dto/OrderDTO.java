@@ -22,5 +22,5 @@ public class OrderDTO {
     private Instant orderDate;
     private Instant deliveryDate;
     private Status status;
-    private List<MenuItemDTO> items;
+    private List<OrderItemDTO> items;
 }

@@ -4,16 +4,17 @@ import com.bejlka.foodservice.domain.dto.UserDTO;
 import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.enums.Role;
 import com.bejlka.foodservice.domain.mapper.UserMapper;
-import com.bejlka.foodservice.exeption.CartIsEmpty;
-import com.bejlka.foodservice.exeption.LoginBusy;
-import com.bejlka.foodservice.exeption.UserNotFound;
+import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -32,14 +33,19 @@ public class UserService {
         if (optionalUser.isPresent()) {
             return optionalUser.get();
         }
-        throw new UserNotFound("Пользователь не найден");
+        throw new CustomException(HttpStatus.NOT_FOUND, "Пользователь не найден: " + id);
     }
 
+    @Transactional
     public void createOrder(User user) {
-        if (user.getCart().getItems().size() == 0) {
-            throw new CartIsEmpty("В корзине ничего нет");
+        if (user.getCart() == null || user.getCart().getItems().isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "В корзине ничего нет");
         }
-        user.getOrderList().add(orderService.createOrder(user));
+        if (user.getOrders() == null) {
+            user.setOrders(new ArrayList<>());
+        }
+        user.getOrders().add(orderService.createOrder(user));
+        cartService.removeAll(user.getCart());
         updateUser(user);
     }
 
@@ -48,26 +54,25 @@ public class UserService {
         if (optionalUser.isPresent()) {
             return optionalUser.get();
         }
-        throw new UserNotFound("Пользователь не найден");
+        throw new CustomException(HttpStatus.NOT_FOUND, "Пользователь не найден: " + login);
     }
 
     public UserDTO getUserByLoginDTO(String login) {
-        return userMapper.map(getUserByLogin(login));
+        return userMapper.userToDTO(getUserByLogin(login));
     }
 
     public Long createUser(User user) {
         Optional<User> optionalUser = userRepository.findByLogin(user.getLogin());
         if (optionalUser.isPresent()) {
-            throw new LoginBusy("Логин занят");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Логин занят: " + user.getLogin());
         }
-        user.setCart(cartService.createCart());
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user).getId();
     }
 
     public UserDTO updateUser(User user) {
-        return userMapper.map(userRepository.save(user));
+        return userMapper.userToDTO(userRepository.save(user));
     }
 
     public void deleteUser(Long id) {

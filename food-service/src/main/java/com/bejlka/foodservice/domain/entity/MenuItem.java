@@ -16,7 +16,7 @@ public class MenuItem {
     @SequenceGenerator(sequenceName = "menu_seq", allocationSize = 1, name = "MENU_SEQ")
     private Long id;
     private String name;
-    private double price;
+    private Double price;
 
     @ManyToOne
     private Restaurant restaurant;

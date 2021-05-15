@@ -5,16 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDTO {
-    private String login;
+public class OrderItemDTO {
+    private Long id;
     private String name;
-    private String address;
-    private CartDTO cart;
-    private List<OrderDTO> orders;
+    private Integer price;
+    private Integer count;
+    private RestaurantDTO restaurant;
 }

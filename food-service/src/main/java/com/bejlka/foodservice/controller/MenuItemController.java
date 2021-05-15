@@ -2,7 +2,6 @@ package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.domain.dto.MenuItemDTO;
 import com.bejlka.foodservice.domain.entity.MenuItem;
-import com.bejlka.foodservice.exeption.MenuItemNotFound;
 import com.bejlka.foodservice.service.MenuItemService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;

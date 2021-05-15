@@ -3,11 +3,12 @@ package com.bejlka.foodservice.service;
 import com.bejlka.foodservice.domain.dto.MenuItemDTO;
 import com.bejlka.foodservice.domain.entity.MenuItem;
 import com.bejlka.foodservice.domain.mapper.MenuItemMapper;
-import com.bejlka.foodservice.exeption.MenuItemNotFound;
+import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.MenuItemRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class MenuItemService {
         if (optionalMenuItem.isPresent()) {
             return optionalMenuItem.get();
         }
-        throw new MenuItemNotFound("Пункт меню с таким id не найден: " + id);
+        throw new CustomException(HttpStatus.NOT_FOUND, "Пункт меню с таким id не найден: " + id);
     }
 
     public MenuItemDTO getMenuItem(Long id) {
@@ -33,7 +34,7 @@ public class MenuItemService {
         if (optionalMenuItem.isPresent()) {
             return menuItemMapper.map(optionalMenuItem.get());
         }
-        throw new MenuItemNotFound("Пункт меню с таким id не найден: " + id);
+        throw new CustomException(HttpStatus.NOT_FOUND, "Пункт меню с таким id не найден: " + id);
     }
 
     public MenuItem createMenuItem(MenuItem menuItem) {
