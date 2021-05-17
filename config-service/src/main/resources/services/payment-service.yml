@@ -1,4 +1,20 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    properties.hibernate.temp.use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: update
+    properties:
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/payment
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
 server:
+  error:
+    include-message: always
   servlet:
-    context-path: /payment
+    context-path: /payments
   port: 8082

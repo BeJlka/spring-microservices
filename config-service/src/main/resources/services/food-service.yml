@@ -12,11 +12,9 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
 
-
-
 server:
   error:
     include-message: always
-    #  servlet:
-    #  context-path: /food
+#  servlet:
+#    context-path: /food
   port: 8081

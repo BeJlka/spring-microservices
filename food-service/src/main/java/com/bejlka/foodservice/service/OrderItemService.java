@@ -18,7 +18,6 @@ public class OrderItemService {
     OrderItemRepository orderItemRepository;
     OrderItemMapper orderItemMapper;
 
-
     public List<OrderItem> saveAll(List<CartItem> items) {
         return orderItemRepository.saveAll(orderItemMapper.cartItemToOrderItem(items));
     }

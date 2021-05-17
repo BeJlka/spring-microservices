@@ -6,7 +6,6 @@ import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.enums.Status;
 import com.bejlka.foodservice.domain.mapper.OrderMapper;
 import com.bejlka.foodservice.exeption.CustomException;
-import com.bejlka.foodservice.exeption.OrderNotFound;
 import com.bejlka.foodservice.repository.OrderRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -45,28 +44,6 @@ public class OrderService {
     public List<OrderDTO> getAllOrder(User user) {
         return user.getOrders().stream().map(orderMapper::map).collect(Collectors.toList());
     }
-//
-//    public Order addItem(User user, MenuItem menuItem) {
-//        Order order;
-//        Optional<Order> optionalOrder = user.getOrders().stream().filter(item ->
-//                item.getRestaurant().getId().equals(menuItem.getRestaurant().getId()) && !item.isPayment()
-//        ).findFirst();
-//
-//        if (optionalOrder.isPresent()) {
-//            order = optionalOrder.get();
-//            Optional<OrderItem> optionalOrderItem = order.getItems().stream().filter(orderItem -> orderItem.getName().equals(menuItem.getName()))
-//                    .findFirst();
-//            if (optionalOrderItem.isPresent()) {
-//                optionalOrderItem.get().increment();
-//            } else {
-//                order.getItems().add(orderItemService.create(menuItem));
-//            }
-//        } else {
-////            order = createOrder(user, menuItem);
-//        }
-////        return orderRepository.save(order);
-//        return null;
-//    }
 
     public OrderDTO getOrder(Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
@@ -74,5 +51,17 @@ public class OrderService {
             return orderMapper.map(optionalOrder.get());
         }
         throw new CustomException(HttpStatus.NOT_FOUND, "Чек с таким id не найден: " + id);
+    }
+
+    public Order find(Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        if (optionalOrder.isPresent()) {
+            return optionalOrder.get();
+        }
+        throw new CustomException(HttpStatus.NOT_FOUND, "Не удалось найти счет: " + id);
+    }
+
+    public void update(Order order) {
+        orderRepository.save(order);
     }
 }

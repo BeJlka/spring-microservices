@@ -12,8 +12,8 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class MenuItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MENU_SEQ")
-    @SequenceGenerator(sequenceName = "menu_seq", allocationSize = 1, name = "MENU_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "menu_seq")
+    @SequenceGenerator(sequenceName = "menu_seq", allocationSize = 1, name = "menu_seq")
     private Long id;
     private String name;
     private Double price;

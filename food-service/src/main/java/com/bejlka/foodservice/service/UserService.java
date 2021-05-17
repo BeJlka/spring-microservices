@@ -1,8 +1,11 @@
 package com.bejlka.foodservice.service;
 
+import com.bejlka.foodservice.domain.dto.PaymentDTO;
 import com.bejlka.foodservice.domain.dto.UserDTO;
+import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.enums.Role;
+import com.bejlka.foodservice.domain.enums.Status;
 import com.bejlka.foodservice.domain.mapper.UserMapper;
 import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.UserRepository;
@@ -23,6 +26,7 @@ import java.util.Optional;
 public class UserService {
 
     UserRepository userRepository;
+    PaymentService paymentService;
     PasswordEncoder passwordEncoder;
     OrderService orderService;
     CartService cartService;
@@ -44,9 +48,16 @@ public class UserService {
         if (user.getOrders() == null) {
             user.setOrders(new ArrayList<>());
         }
-        user.getOrders().add(orderService.createOrder(user));
+        Order order = orderService.createOrder(user);
+        user.getOrders().add(order);
         cartService.removeAll(user.getCart());
         updateUser(user);
+        PaymentDTO payment = paymentService.createPayment(user, order);
+        order.setPaymentId(payment.getId());
+        if (payment.getStatus().equals("SUCCESS")) {
+            order.setStatus(Status.COOKING);
+            orderService.update(order);
+        }
     }
 
     public User getUserByLogin(String login) {

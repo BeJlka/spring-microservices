@@ -14,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class Restaurant {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RESTAURANT_SEQ")
-    @SequenceGenerator(sequenceName = "restaurant_seq", allocationSize = 1, name = "RESTAURANT_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurant_seq")
+    @SequenceGenerator(sequenceName = "restaurant_seq", allocationSize = 1, name = "restaurant_seq")
     private Long id;
 
     @Column(unique = true)

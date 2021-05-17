@@ -16,9 +16,11 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ORDER_SEQ")
-    @SequenceGenerator(sequenceName = "order_seq", allocationSize = 1, name = "ORDER_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_seq")
+    @SequenceGenerator(sequenceName = "order_seq", allocationSize = 1, name = "order_seq")
     private Long id;
+
+    private Long paymentId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -31,8 +33,6 @@ public class Order {
     private String address;
 
     private Double amount;
-
-    private boolean payment;
 
     private Instant orderDate;
     private Instant deliveryDate;

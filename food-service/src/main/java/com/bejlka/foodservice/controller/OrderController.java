@@ -4,7 +4,9 @@ import com.bejlka.foodservice.domain.dto.OrderDTO;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.OrderService;
 import com.bejlka.foodservice.service.UserService;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +18,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/orders")
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrderController {
 
-    private final OrderService orderService;
-    private final UserService userService;
+    OrderService orderService;
+    UserService userService;
 
     @GetMapping()
     public List<OrderDTO> getAllOrder(@AuthenticationPrincipal SecurityUser securityUser) {
@@ -30,9 +33,4 @@ public class OrderController {
     public OrderDTO getOrder(@PathVariable Long id) {
         return orderService.getOrder(id);
     }
-
-//    @PutMapping("/{id}")
-//    public void addItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") MenuItem menuItem) {
-//        orderService.addItem(userService.getUserByLogin(securityUser.getLogin()), menuItem);
-//    }
 }
