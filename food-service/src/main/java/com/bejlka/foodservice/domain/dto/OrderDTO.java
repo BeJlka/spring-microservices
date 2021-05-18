@@ -16,7 +16,8 @@ import java.util.List;
 public class OrderDTO {
     private Long id;
     private UserDTO user;
-    private Long paymentId;
+    private PaymentDTO payment;
+    private DeliveryDTO delivery;
     private RestaurantDTO restaurant;
     private String address;
     private double amount;

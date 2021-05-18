@@ -20,8 +20,6 @@ public class Order {
     @SequenceGenerator(sequenceName = "order_seq", allocationSize = 1, name = "order_seq")
     private Long id;
 
-    private Long paymentId;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

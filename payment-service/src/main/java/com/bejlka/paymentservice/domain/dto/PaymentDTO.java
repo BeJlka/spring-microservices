@@ -7,9 +7,8 @@ import java.time.Instant;
 
 @Data
 public class PaymentDTO {
-    private Long id;
-    private Long userId;
     private Long orderId;
+    private Long userId;
     private Instant paymentDate;
     private Status status;
 }

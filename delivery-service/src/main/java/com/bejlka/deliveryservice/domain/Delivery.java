@@ -1,4 +1,4 @@
-package com.bejlka.paymentservice.domain;
+package com.bejlka.deliveryservice.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,12 +11,14 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
+public class Delivery {
     @Id
     private Long orderId;
     private Long userId;
-    private Instant paymentDate;
+    private String restaurantAddress;
+    private String deliveryAddress;
+    private Instant orderDate;
+    private Instant deliveryDate;
     @Enumerated(EnumType.STRING)
     private Status status;
-
 }

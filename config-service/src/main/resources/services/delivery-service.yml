@@ -1,4 +1,23 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+#    properties.hibernate.temp.use_jdbc_metadata_defaults: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/delivery
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
 server:
+  error:
+    include-message: always
   servlet:
-    context-path: /delivery
+    context-path: /deliveries
   port: 8083

@@ -31,6 +31,7 @@ public class CartService {
     public Cart createCart(Long id) {
         Cart cart = new Cart();
         cart.setUserId(id);
+        cart.setItems(new ArrayList<>());
         return cartRepository.save(cart);
     }
 

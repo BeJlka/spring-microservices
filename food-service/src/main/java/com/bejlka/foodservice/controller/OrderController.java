@@ -1,6 +1,7 @@
 package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.domain.dto.OrderDTO;
+import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.OrderService;
 import com.bejlka.foodservice.service.UserService;
@@ -8,10 +9,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +30,10 @@ public class OrderController {
     @GetMapping("/{id}")
     public OrderDTO getOrder(@PathVariable Long id) {
         return orderService.getOrder(id);
+    }
+
+    @PutMapping("/{id}")
+    public void updateStatusOrder(@PathVariable("id") Order order) {
+        orderService.updateStatusOrder(order);
     }
 }

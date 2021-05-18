@@ -1,22 +1,18 @@
-package com.bejlka.paymentservice.domain;
+package com.bejlka.deliveryservice.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.Instant;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Payment {
-    @Id
+public class DeliveryRequestDTO {
     private Long orderId;
     private Long userId;
-    private Instant paymentDate;
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
+    private String restaurantAddress;
+    private String deliveryAddress;
+    private Instant orderDate;
 }

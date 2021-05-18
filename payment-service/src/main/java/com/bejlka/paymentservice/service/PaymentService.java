@@ -27,18 +27,12 @@ public class PaymentService {
 
     public PaymentDTO payment(Long id) {
         Optional<Payment> optionalPayment = paymentRepository.findById(id);
-        if (optionalPayment.isPresent()) {
-            return paymentMapper.paymentToDTO(optionalPayment.get());
-        }
-        throw new CustomException(HttpStatus.NOT_FOUND, "чек с таким id не найден: " + id);
+        return optionalPayment.map(paymentMapper::paymentToDTO).orElse(null);
     }
 
     public List<PaymentDTO> paymentsAll(Long id) {
         Optional<List<Payment>> optionalPaymentList = paymentRepository.findByUserId(id);
-        if (optionalPaymentList.isPresent()) {
-            return paymentMapper.listPaymentToDTO(optionalPaymentList.get());
-        }
-        throw new CustomException(HttpStatus.NOT_FOUND, "Чеки с пользователя с id не найдены: " + id);
+        return optionalPaymentList.map(paymentMapper::listPaymentToDTO).orElse(null);
     }
 
     public PaymentDTO createPayment(PaymentRequestDTO paymentRequestDTO) {
@@ -59,6 +53,7 @@ public class PaymentService {
     public PaymentDTO updatePayment(Long id) {
         Optional<Payment> optionalPayment = paymentRepository.findById(id);
         if (optionalPayment.isPresent()) {
+            optionalPayment.get().setPaymentDate(Instant.now());
             optionalPayment.get().setStatus(Status.SUCCESS);
             return paymentMapper.paymentToDTO(paymentRepository.save(optionalPayment.get()));
         }

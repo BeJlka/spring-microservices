@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.feign;
 
 import com.bejlka.foodservice.domain.dto.PaymentDTO;
-import com.bejlka.foodservice.domain.dto.PaymentServiceDTO;
+import com.bejlka.foodservice.domain.dto.PaymentBodyDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public interface PaymentServiceClient {
     PaymentDTO getPayment(@PathVariable("id") Long id);
 
     @PostMapping("/payments/")
-    PaymentDTO createPayment(PaymentServiceDTO paymentServiceDTO);
+    PaymentDTO createPayment(PaymentBodyDTO paymentBodyDTO);
 
     @PutMapping("/payments/{id}")
     PaymentDTO updatePayment(@PathVariable("id") Long id);

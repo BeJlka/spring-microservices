@@ -18,6 +18,7 @@ public interface OrderItemMapper {
     List<OrderItem> cartItemToOrderItem(List<CartItem> items);
 
     @Named("order.items")
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "restaurant", ignore = true)
     OrderItemDTO map(OrderItem orderItem);
 

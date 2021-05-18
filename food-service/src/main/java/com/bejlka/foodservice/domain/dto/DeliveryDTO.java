@@ -11,9 +11,12 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PaymentDTO {
+public class DeliveryDTO {
     private Long orderId;
     private Long userId;
-    private Instant paymentDate;
+    private String restaurantAddress;
+    private String deliveryAddress;
+    private Instant orderDate;
+    private Instant deliveryDate;
     private String status;
 }

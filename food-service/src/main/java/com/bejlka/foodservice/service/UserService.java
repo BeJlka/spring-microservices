@@ -1,5 +1,6 @@
 package com.bejlka.foodservice.service;
 
+import com.bejlka.foodservice.domain.dto.DeliveryDTO;
 import com.bejlka.foodservice.domain.dto.PaymentDTO;
 import com.bejlka.foodservice.domain.dto.UserDTO;
 import com.bejlka.foodservice.domain.entity.Order;
@@ -27,6 +28,7 @@ public class UserService {
 
     UserRepository userRepository;
     PaymentService paymentService;
+    DeliveryService deliveryService;
     PasswordEncoder passwordEncoder;
     OrderService orderService;
     CartService cartService;
@@ -53,7 +55,6 @@ public class UserService {
         cartService.removeAll(user.getCart());
         updateUser(user);
         PaymentDTO payment = paymentService.createPayment(user, order);
-        order.setPaymentId(payment.getId());
         if (payment.getStatus().equals("SUCCESS")) {
             order.setStatus(Status.COOKING);
             orderService.update(order);
@@ -88,5 +89,14 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public void confirmation(Order order) {
+        DeliveryDTO delivery = deliveryService.delivery(order.getId());
+        if (delivery.getStatus().equals("DONE")) {
+            order.setStatus(Status.DONE);
+            order.setDeliveryDate(delivery.getDeliveryDate());
+            orderService.update(order);
+        }
     }
 }

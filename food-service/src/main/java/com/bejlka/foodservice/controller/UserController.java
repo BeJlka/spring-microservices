@@ -1,6 +1,7 @@
 package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.domain.dto.UserDTO;
+import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.UserService;
@@ -23,20 +24,14 @@ public class UserController {
         return userService.getUserByLoginDTO(securityUser.getLogin());
     }
 
-    //    @GetMapping("/all")
-//    public String getAll() {
-//        return feignService.getAll();
-//    }
-//
-//    @GetMapping("/delivery")
-//    public String getDelivery() {
-//        return feignService.getDelivery();
-//    }
-//
-
     @GetMapping("/order")
     public void createOrder(@AuthenticationPrincipal SecurityUser securityUser) {
         userService.createOrder(userService.getUserByLogin(securityUser.getLogin()));
+    }
+
+    @GetMapping("/confirmation/{id}")
+    public void confirmation(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Order order) {
+        userService.confirmation(order);
     }
 
     @PostMapping("/registration")

@@ -1,6 +1,7 @@
 package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.domain.dto.PaymentDTO;
+import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.PaymentService;
 import com.bejlka.foodservice.service.UserService;
@@ -24,8 +25,8 @@ public class PaymentController {
     PaymentService paymentService;
 
     @GetMapping("/payments/{id}")
-    public PaymentDTO payment(@AuthenticationPrincipal SecurityUser securityUser){
-        return paymentService.payment(userService.getUserByLogin(securityUser.getLogin()));
+    public PaymentDTO payment(@PathVariable("id") Long id){
+        return paymentService.payment(id);
     }
 
     @GetMapping("/payments")

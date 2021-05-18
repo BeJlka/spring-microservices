@@ -6,6 +6,8 @@ import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.enums.Status;
 import com.bejlka.foodservice.domain.mapper.OrderMapper;
 import com.bejlka.foodservice.exeption.CustomException;
+import com.bejlka.foodservice.feign.DeliveryServiceClient;
+import com.bejlka.foodservice.feign.PaymentServiceClient;
 import com.bejlka.foodservice.repository.OrderRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,9 @@ public class OrderService {
 
     OrderRepository orderRepository;
     OrderItemService orderItemService;
+    PaymentServiceClient paymentServiceClient;
+    DeliveryServiceClient deliveryServiceClient;
+    DeliveryService deliveryService;
     OrderMapper orderMapper;
 
     @Transactional
@@ -42,13 +47,17 @@ public class OrderService {
     }
 
     public List<OrderDTO> getAllOrder(User user) {
-        return user.getOrders().stream().map(orderMapper::map).collect(Collectors.toList());
+        return user.getOrders().stream().map(order -> orderMapper.map(order,
+                paymentServiceClient.getPayment(order.getId()),
+                deliveryService.delivery(order.getId()))).collect(Collectors.toList());
     }
 
     public OrderDTO getOrder(Long id) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isPresent()) {
-            return orderMapper.map(optionalOrder.get());
+            return orderMapper.map(optionalOrder.get(),
+                    paymentServiceClient.getPayment(optionalOrder.get().getId()),
+                    deliveryService.delivery(optionalOrder.get().getId()));
         }
         throw new CustomException(HttpStatus.NOT_FOUND, "Чек с таким id не найден: " + id);
     }
@@ -63,5 +72,13 @@ public class OrderService {
 
     public void update(Order order) {
         orderRepository.save(order);
+    }
+
+    public void updateStatusOrder(Order order) {
+        if (order.getStatus().equals(Status.COOKING)) {
+            order.setStatus(Status.DELIVERY);
+            deliveryService.createDelivery(order);
+            orderRepository.save(order);
+        }
     }
 }

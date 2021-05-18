@@ -14,6 +14,7 @@ public interface RestaurantMapper {
     RestaurantDTO restaurantToDTO(Restaurant restaurant);
 
     @Named("items.restaurant")
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "items", ignore = true)
     RestaurantDTO itemRestaurantToDTO(Restaurant restaurant);
 

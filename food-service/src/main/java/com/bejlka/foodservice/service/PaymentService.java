@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.service;
 
 import com.bejlka.foodservice.domain.dto.PaymentDTO;
-import com.bejlka.foodservice.domain.dto.PaymentServiceDTO;
+import com.bejlka.foodservice.domain.dto.PaymentBodyDTO;
 import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.enums.Status;
@@ -20,8 +20,8 @@ public class PaymentService {
     PaymentServiceClient paymentServiceClient;
     OrderService orderService;
 
-    public PaymentDTO payment(User user) {
-        return paymentServiceClient.getPayment(user.getId());
+    public PaymentDTO payment(Long id) {
+        return paymentServiceClient.getPayment(id);
     }
 
     public List<PaymentDTO> paymentsAll(User user) {
@@ -29,10 +29,10 @@ public class PaymentService {
     }
 
     public PaymentDTO createPayment(User user, Order order) {
-        PaymentServiceDTO paymentServiceDTO = new PaymentServiceDTO();
-        paymentServiceDTO.setUserId(user.getId());
-        paymentServiceDTO.setOrderId(order.getId());
-        return paymentServiceClient.createPayment(paymentServiceDTO);
+        PaymentBodyDTO body = new PaymentBodyDTO();
+        body.setUserId(user.getId());
+        body.setOrderId(order.getId());
+        return paymentServiceClient.createPayment(body);
     }
 
     public PaymentDTO updatePayment(Long id) {
