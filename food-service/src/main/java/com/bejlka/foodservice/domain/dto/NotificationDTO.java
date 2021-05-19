@@ -7,5 +7,5 @@ public class NotificationDTO {
     private String email;
     private Long orderId;
     private String title;
-    private String massage;
+    private String message;
 }

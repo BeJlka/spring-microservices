@@ -46,7 +46,7 @@ public class PaymentService {
         notificationDTO.setEmail(order.getUser().getEmail());
         notificationDTO.setOrderId(order.getId());
         notificationDTO.setTitle("Оплата");
-        notificationDTO.setMassage("Оплата прошла успешно и ресторан приступил к готовке");
+        notificationDTO.setMessage("Оплата прошла успешно и ресторан приступил к готовке");
 
         rabbitMQService.sendMessage(notificationDTO);
         orderService.update(order);

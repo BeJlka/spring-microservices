@@ -82,7 +82,7 @@ public class OrderService {
             notificationDTO.setEmail(order.getUser().getEmail());
             notificationDTO.setOrderId(order.getId());
             notificationDTO.setTitle("Ресторан");
-            notificationDTO.setMassage("Ресторан закончил готовить блюдо и передал его в доставку");
+            notificationDTO.setMessage("Ресторан закончил готовить заказ и передал его службе доставки");
 
             rabbitMQService.sendMessage(notificationDTO);
             deliveryService.createDelivery(order);

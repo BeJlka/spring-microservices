@@ -46,11 +46,11 @@ public class DeliveryService {
         notificationDTO.setOrderId(deliveryDTO.getOrderId());
         notificationDTO.setTitle("Доставка");
         if (deliveryDTO.getStatus().equals("DELIVERY")) {
-            notificationDTO.setMassage("Курьер уже направляется к вам");
+            notificationDTO.setMessage("Курьер уже направляется к вам");
             rabbitMQService.sendMessage(notificationDTO);
         }
         if (deliveryDTO.getStatus().equals("DONE")) {
-            notificationDTO.setMassage("Курьер доставил заказ");
+            notificationDTO.setMessage("Курьер доставил заказ");
             rabbitMQService.sendMessage(notificationDTO);
         }
         return deliveryDTO;

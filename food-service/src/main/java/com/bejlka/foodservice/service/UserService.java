@@ -56,12 +56,12 @@ public class UserService {
 
         PaymentDTO payment = paymentService.createPayment(user, order);
         if (payment.getStatus().equals("SUCCESS")) {
-            notificationDTO.setMassage("Оплата прошла успешно");
+            notificationDTO.setMessage("Оплата прошла успешно");
             rabbitMQService.sendMessage(notificationDTO);
             order.setStatus(Status.COOKING);
             orderService.update(order);
         } else {
-            notificationDTO.setMassage("Что-то пошло не так во вроемя оплаты. Попробуйте еще раз");
+            notificationDTO.setMessage("Что-то пошло не так во вроемя оплаты. Попробуйте еще раз");
             rabbitMQService.sendMessage(notificationDTO);
         }
     }
@@ -104,7 +104,7 @@ public class UserService {
             notificationDTO.setEmail(order.getUser().getEmail());
             notificationDTO.setOrderId(order.getId());
             notificationDTO.setTitle("Отзыв");
-            notificationDTO.setMassage("Пожалуйста оцените качество доставки и оставьте свой отзыв.");
+            notificationDTO.setMessage("Пожалуйста оцените качество доставки и оставьте свой отзыв.");
 
             rabbitMQService.sendMessage(notificationDTO);
             order.setStatus(Status.DONE);
