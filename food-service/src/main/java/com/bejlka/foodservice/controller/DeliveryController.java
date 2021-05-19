@@ -1,7 +1,6 @@
 package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.domain.dto.DeliveryDTO;
-import com.bejlka.foodservice.domain.dto.PaymentDTO;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.DeliveryService;
 import com.bejlka.foodservice.service.UserService;
@@ -22,7 +21,7 @@ public class DeliveryController {
     UserService userService;
 
     @GetMapping("/{id}")
-    public DeliveryDTO payment(@PathVariable("id") Long id){
+    public DeliveryDTO payment(@PathVariable("id") Long id) {
         return deliveryService.delivery(id);
     }
 
@@ -33,6 +32,6 @@ public class DeliveryController {
 
     @PutMapping("/{id}")
     public DeliveryDTO paymentUpdate(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
-        return  deliveryService.updateStatusDelivery(id);
+        return deliveryService.updateStatusDelivery(userService.getUserByLogin(securityUser.getLogin()), id);
     }
 }

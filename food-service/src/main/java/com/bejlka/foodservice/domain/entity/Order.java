@@ -1,4 +1,5 @@
 package com.bejlka.foodservice.domain.entity;
+
 import com.bejlka.foodservice.domain.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;

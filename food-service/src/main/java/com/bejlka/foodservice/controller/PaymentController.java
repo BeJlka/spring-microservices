@@ -1,7 +1,6 @@
 package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.domain.dto.PaymentDTO;
-import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.PaymentService;
 import com.bejlka.foodservice.service.UserService;
@@ -9,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,7 +23,7 @@ public class PaymentController {
     PaymentService paymentService;
 
     @GetMapping("/payments/{id}")
-    public PaymentDTO payment(@PathVariable("id") Long id){
+    public PaymentDTO payment(@PathVariable("id") Long id) {
         return paymentService.payment(id);
     }
 
@@ -36,6 +34,6 @@ public class PaymentController {
 
     @PutMapping("/payments/{id}")
     public PaymentDTO paymentUpdate(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
-        return  paymentService.updatePayment(id);
+        return paymentService.updatePayment(id);
     }
 }

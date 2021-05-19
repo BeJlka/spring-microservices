@@ -14,6 +14,7 @@ import java.util.List;
 public class UserDTO {
     private String login;
     private String name;
+    private String email;
     private String address;
     private CartDTO cart;
     private List<OrderDTO> orders;

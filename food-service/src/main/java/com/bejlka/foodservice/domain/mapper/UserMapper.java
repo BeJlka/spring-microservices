@@ -1,12 +1,10 @@
 package com.bejlka.foodservice.domain.mapper;
 
-import com.bejlka.foodservice.domain.dto.*;
-import com.bejlka.foodservice.domain.entity.*;
+import com.bejlka.foodservice.domain.dto.UserDTO;
+import com.bejlka.foodservice.domain.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {CartMapper.class, OrderMapper.class})
 public interface UserMapper {

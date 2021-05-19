@@ -12,9 +12,12 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
 
+
+rabbitmq:
+  topic-exchange-food: food.notify.exchange
+  routing-key-food: key.food
+
 server:
   error:
     include-message: always
-#  servlet:
-#    context-path: /food
   port: 8081

@@ -2,6 +2,7 @@ package com.bejlka.foodservice.service;
 
 import com.bejlka.foodservice.domain.dto.DeliveryBodyDTO;
 import com.bejlka.foodservice.domain.dto.DeliveryDTO;
+import com.bejlka.foodservice.domain.dto.NotificationDTO;
 import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.feign.DeliveryServiceClient;
@@ -17,6 +18,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DeliveryService {
     DeliveryServiceClient deliveryServiceClient;
+    RabbitMQService rabbitMQService;
 
     public DeliveryDTO createDelivery(Order order) {
         DeliveryBodyDTO body = new DeliveryBodyDTO();
@@ -36,7 +38,21 @@ public class DeliveryService {
         return deliveryServiceClient.delivery(id);
     }
 
-    public DeliveryDTO updateStatusDelivery(Long id) {
-        return deliveryServiceClient.updateStatusDelivery(id);
+    public DeliveryDTO updateStatusDelivery(User user, Long id) {
+        DeliveryDTO deliveryDTO = deliveryServiceClient.updateStatusDelivery(id);
+
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setEmail(user.getEmail());
+        notificationDTO.setOrderId(deliveryDTO.getOrderId());
+        notificationDTO.setTitle("Доставка");
+        if (deliveryDTO.getStatus().equals("DELIVERY")) {
+            notificationDTO.setMassage("Курьер уже направляется к вам");
+            rabbitMQService.sendMessage(notificationDTO);
+        }
+        if (deliveryDTO.getStatus().equals("DONE")) {
+            notificationDTO.setMassage("Курьер доставил заказ");
+            rabbitMQService.sendMessage(notificationDTO);
+        }
+        return deliveryDTO;
     }
 }

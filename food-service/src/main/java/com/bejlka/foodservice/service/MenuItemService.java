@@ -21,14 +21,6 @@ public class MenuItemService {
     MenuItemRepository menuItemRepository;
     MenuItemMapper menuItemMapper;
 
-    public MenuItem findMenuById(Long id) {
-        Optional<MenuItem> optionalMenuItem = menuItemRepository.findById(id);
-        if (optionalMenuItem.isPresent()) {
-            return optionalMenuItem.get();
-        }
-        throw new CustomException(HttpStatus.NOT_FOUND, "Пункт меню с таким id не найден: " + id);
-    }
-
     public MenuItemDTO getMenuItem(Long id) {
         Optional<MenuItem> optionalMenuItem = menuItemRepository.findById(id);
         if (optionalMenuItem.isPresent()) {

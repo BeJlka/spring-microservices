@@ -1,7 +1,6 @@
 package com.bejlka.foodservice.service;
 
 import com.bejlka.foodservice.domain.dto.CartDTO;
-import com.bejlka.foodservice.domain.dto.CartItemDTO;
 import com.bejlka.foodservice.domain.entity.Cart;
 import com.bejlka.foodservice.domain.entity.CartItem;
 import com.bejlka.foodservice.domain.entity.MenuItem;
@@ -37,10 +36,6 @@ public class CartService {
 
     public CartDTO getCart(Cart cart) {
         return cartMapper.cartToDTO(cart);
-    }
-
-    public List<CartItemDTO> getAllMenuItems(Cart cart) {
-        return cartMapper.cartToDTO(cart).getItems();
     }
 
     public CartDTO addItem(User user, MenuItem menuItem) {

@@ -1,0 +1,19 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: notification
+  rabbitmq:
+    port: 5672
+    host: localhost
+    username: guest
+    password: guest
+    listener:
+      direct:
+        default-requeue-rejected: true
+
+rabbitmq:
+  queue-food: food.notify
+  topic-exchange-food: food.notify.exchange
+  routing-key-food: key.food

@@ -1,10 +1,8 @@
 package com.bejlka.foodservice.service;
 
-import com.bejlka.foodservice.domain.dto.MenuItemDTO;
 import com.bejlka.foodservice.domain.dto.RestaurantDTO;
 import com.bejlka.foodservice.domain.entity.MenuItem;
 import com.bejlka.foodservice.domain.entity.Restaurant;
-import com.bejlka.foodservice.domain.mapper.MenuItemMapper;
 import com.bejlka.foodservice.domain.mapper.RestaurantMapper;
 import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.RestaurantRepository;
@@ -14,9 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -26,19 +22,14 @@ public class RestaurantService {
     RestaurantRepository restaurantRepository;
     MenuItemService menuItemService;
     RestaurantMapper restaurantMapper;
-    MenuItemMapper menuItemMapper;
 
     public RestaurantDTO getRestaurant(Restaurant restaurant) {
         return restaurantMapper.restaurantToDTO(restaurant);
     }
 
-    public List<MenuItemDTO> getAllMenuItem(Restaurant restaurant) {
-        return restaurant.getItems().stream().map(menuItemMapper::map).collect(Collectors.toList());
-    }
-
     public Long createRestaurant(Restaurant restaurant) {
         Optional<Restaurant> optionalRestaurant = restaurantRepository.findByName(restaurant.getName());
-        if (optionalRestaurant.isPresent()){
+        if (optionalRestaurant.isPresent()) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Данное название ресторана занято");
         }
         return restaurantRepository.save(restaurant).getId();

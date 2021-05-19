@@ -1,6 +1,7 @@
 package com.bejlka.foodservice.service;
 
 import com.bejlka.foodservice.domain.dto.DeliveryDTO;
+import com.bejlka.foodservice.domain.dto.NotificationDTO;
 import com.bejlka.foodservice.domain.dto.PaymentDTO;
 import com.bejlka.foodservice.domain.dto.UserDTO;
 import com.bejlka.foodservice.domain.entity.Order;
@@ -30,17 +31,10 @@ public class UserService {
     PaymentService paymentService;
     DeliveryService deliveryService;
     PasswordEncoder passwordEncoder;
+    RabbitMQService rabbitMQService;
     OrderService orderService;
     CartService cartService;
     UserMapper userMapper;
-
-    public User getUserById(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            return optionalUser.get();
-        }
-        throw new CustomException(HttpStatus.NOT_FOUND, "Пользователь не найден: " + id);
-    }
 
     @Transactional
     public void createOrder(User user) {
@@ -54,10 +48,21 @@ public class UserService {
         user.getOrders().add(order);
         cartService.removeAll(user.getCart());
         updateUser(user);
+
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setEmail(user.getEmail());
+        notificationDTO.setOrderId(order.getId());
+        notificationDTO.setTitle("Оформление заказа");
+
         PaymentDTO payment = paymentService.createPayment(user, order);
         if (payment.getStatus().equals("SUCCESS")) {
+            notificationDTO.setMassage("Оплата прошла успешно");
+            rabbitMQService.sendMessage(notificationDTO);
             order.setStatus(Status.COOKING);
             orderService.update(order);
+        } else {
+            notificationDTO.setMassage("Что-то пошло не так во вроемя оплаты. Попробуйте еще раз");
+            rabbitMQService.sendMessage(notificationDTO);
         }
     }
 
@@ -94,6 +99,14 @@ public class UserService {
     public void confirmation(Order order) {
         DeliveryDTO delivery = deliveryService.delivery(order.getId());
         if (delivery.getStatus().equals("DONE")) {
+
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setEmail(order.getUser().getEmail());
+            notificationDTO.setOrderId(order.getId());
+            notificationDTO.setTitle("Отзыв");
+            notificationDTO.setMassage("Пожалуйста оцените качество доставки и оставьте свой отзыв.");
+
+            rabbitMQService.sendMessage(notificationDTO);
             order.setStatus(Status.DONE);
             order.setDeliveryDate(delivery.getDeliveryDate());
             orderService.update(order);

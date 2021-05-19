@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.feign;
 
-import com.bejlka.foodservice.domain.dto.DeliveryDTO;
 import com.bejlka.foodservice.domain.dto.DeliveryBodyDTO;
+import com.bejlka.foodservice.domain.dto.DeliveryDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

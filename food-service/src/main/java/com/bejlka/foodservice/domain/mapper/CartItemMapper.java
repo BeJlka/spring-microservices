@@ -6,8 +6,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring", uses = {RestaurantMapper.class})
 public interface CartItemMapper {
     @Named("user.cart.items")

@@ -12,23 +12,6 @@ spring:
             - Method=GET,POST,PUT,DELETE
           filters:
             - RewritePath=/food/(?<path>.*), /$\{path}
-#        - id: payment-service
-#          uri: http://localhost:8082
-#          predicates:
-#            - Path=/payments/**
-#            - Method=GET,POST,PUT,DELETE
-#          filters:
-#            - RewritePath=/payments/(?<path>.*), /$\{path}
-#        - id: delivery-service
-#          uri: http://localhost:8083
-#          predicates:
-#            - Path=/delivery/**
-#          filters:
-#            - RewritePath=/delivery/(?<path>.*), /$\{path}
-
-ribbon:
-  ReadTimeout: 20000
-  ConnectTimeout: 20000
 
 server:
   port: 8989

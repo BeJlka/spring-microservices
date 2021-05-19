@@ -31,7 +31,7 @@ public class CartController {
     }
 
     @DeleteMapping("/items/{id}")
-    public void removeItem(@AuthenticationPrincipal SecurityUser securityUser,  @PathVariable("id") MenuItem menuItem) {
+    public void removeItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") MenuItem menuItem) {
         cartService.remove(userService.getUserByLogin(securityUser.getLogin()), menuItem);
     }
 

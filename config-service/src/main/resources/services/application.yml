@@ -2,15 +2,7 @@ logging:
   level:
     org.springframework.security: INFO
     org.springframework.cloud.gateway: DEBUG
-#    reactor.netty.http.client: DEBUG
-
-#hystrix:
-#  command:
-#    default:
-#      execution:
-#        isolation:
-#          thread:
-#            timeoutInMilliseconds: 20000
+    reactor.netty.http.client: DEBUG
 
 eureka:
   instance:

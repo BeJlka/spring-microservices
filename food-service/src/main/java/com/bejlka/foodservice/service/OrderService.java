@@ -1,12 +1,12 @@
 package com.bejlka.foodservice.service;
 
+import com.bejlka.foodservice.domain.dto.NotificationDTO;
 import com.bejlka.foodservice.domain.dto.OrderDTO;
 import com.bejlka.foodservice.domain.entity.Order;
 import com.bejlka.foodservice.domain.entity.User;
 import com.bejlka.foodservice.domain.enums.Status;
 import com.bejlka.foodservice.domain.mapper.OrderMapper;
 import com.bejlka.foodservice.exeption.CustomException;
-import com.bejlka.foodservice.feign.DeliveryServiceClient;
 import com.bejlka.foodservice.feign.PaymentServiceClient;
 import com.bejlka.foodservice.repository.OrderRepository;
 import lombok.AccessLevel;
@@ -29,7 +29,7 @@ public class OrderService {
     OrderRepository orderRepository;
     OrderItemService orderItemService;
     PaymentServiceClient paymentServiceClient;
-    DeliveryServiceClient deliveryServiceClient;
+    RabbitMQService rabbitMQService;
     DeliveryService deliveryService;
     OrderMapper orderMapper;
 
@@ -77,6 +77,14 @@ public class OrderService {
     public void updateStatusOrder(Order order) {
         if (order.getStatus().equals(Status.COOKING)) {
             order.setStatus(Status.DELIVERY);
+
+            NotificationDTO notificationDTO = new NotificationDTO();
+            notificationDTO.setEmail(order.getUser().getEmail());
+            notificationDTO.setOrderId(order.getId());
+            notificationDTO.setTitle("Ресторан");
+            notificationDTO.setMassage("Ресторан закончил готовить блюдо и передал его в доставку");
+
+            rabbitMQService.sendMessage(notificationDTO);
             deliveryService.createDelivery(order);
             orderRepository.save(order);
         }
