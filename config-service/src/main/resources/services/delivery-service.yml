@@ -10,7 +10,7 @@ spring:
           use_jdbc_metadata_defaults: false
   datasource:
     platform: postgres
-    url: jdbc:postgresql://localhost:5432/delivery
+    url: jdbc:postgresql://postgres:5432/delivery
     username: postgres
     password: root
     driver-class-name: org.postgresql.Driver

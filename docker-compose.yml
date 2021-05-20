@@ -1,0 +1,110 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    hostname: postgres
+    labels:
+      name: "postgres-service"
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_PASSWORD: 'root'
+      POSTGRES_USER: 'postgres'
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    labels:
+      NAME: "rabbitmq"
+    ports:
+      - 5672:5672
+      - 15672:15672
+    links:
+      - postgres
+
+  config-service:
+    container_name: config-service
+    build: config-service
+    ports:
+      - 8001:8001
+    links:
+      - rabbitmq
+
+  discovery-service:
+    container_name: discovery-service
+    restart: always
+    build: discovery-service
+    ports:
+      - 8761:8761
+#    depends_on:
+#      - config-service
+    links:
+      - config-service
+
+  gateway-service:
+    container_name: gateway-service
+    restart: always
+    build: gateway-service
+    ports:
+      - 8989:8989
+#    depends_on:
+#      - config-service
+#      - discovery-service
+    links:
+      - discovery-service
+
+  food-service:
+    container_name: food-service
+    restart: on-failure
+    build: food-service
+    ports:
+      - 8081:8081
+#    depends_on:
+#      - config-service
+#      - discovery-service
+    links:
+      - gateway-service
+
+  payment-service:
+    container_name: payment-service
+    restart: on-failure
+    build: payment-service
+    ports:
+      - 8082:8082
+#    depends_on:
+#      - config-service
+#      - discovery-service
+    links:
+      - food-service
+
+  delivery-service:
+    container_name: delivery-service
+    restart: on-failure
+    build: delivery-service
+    ports:
+      - 8083:8083
+#    depends_on:
+#      - config-service
+#      - discovery-service
+    links:
+      - payment-service
+
+  notification-service:
+    container_name: notification-service
+    restart: on-failure
+    build: notification-service
+    ports:
+      - 9999:9999
+#    depends_on:
+#      - config-service
+#      - discovery-service
+    links:
+      - delivery-service
+
+#  volumes:
+#    db-data:
+#      driver: local
