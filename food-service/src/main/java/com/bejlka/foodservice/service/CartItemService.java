@@ -1,8 +1,8 @@
 package com.bejlka.foodservice.service;
 
-import com.bejlka.foodservice.domain.entity.Cart;
-import com.bejlka.foodservice.domain.entity.CartItem;
-import com.bejlka.foodservice.domain.entity.MenuItem;
+import com.bejlka.foodservice.model.domain.entity.Cart;
+import com.bejlka.foodservice.model.domain.entity.CartItem;
+import com.bejlka.foodservice.model.domain.entity.MenuItem;
 import com.bejlka.foodservice.repository.CartItemRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,35 +19,21 @@ public class CartItemService {
     CartItemRepository cartItemRepository;
 
     public Optional<CartItem> findCartItem(Cart cart, MenuItem menuItem) {
-        return cartItemRepository.findByUserIdAndMenuId(cart.getUserId(), menuItem.getId());
+        return cartItemRepository.findByMenuIdAndAndCartId(cart.getId(), menuItem.getId());
     }
 
-    public void increment(CartItem cartItem) {
-        cartItem.increment();
-        cartItemRepository.save(cartItem);
-    }
-
-    public void decrement(CartItem cartItem) {
-        cartItem.decrement();
-        cartItemRepository.save(cartItem);
+    public Optional<CartItem> findCartItem(CartItem cartItem) {
+        return cartItemRepository.findById(cartItem.getId());
     }
 
     public CartItem create(Cart cart, MenuItem menuItem) {
         CartItem cartItem = new CartItem();
-        cartItem.setUserId(cart.getUserId());
         cartItem.setMenuId(menuItem.getId());
         cartItem.setRestaurant(menuItem.getRestaurant());
         cartItem.setCount(1);
+        cartItem.setCart(cart);
         cartItem.setPrice(menuItem.getPrice());
         cartItem.setName(menuItem.getName());
-        return cartItemRepository.save(cartItem);
-    }
-
-    public void remove(CartItem cartItem) {
-        cartItemRepository.delete(cartItem);
-    }
-
-    public void removeAll(List<CartItem> items) {
-        cartItemRepository.deleteAll(items);
+        return cartItem;
     }
 }

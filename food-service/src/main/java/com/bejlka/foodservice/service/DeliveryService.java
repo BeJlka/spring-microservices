@@ -1,10 +1,10 @@
 package com.bejlka.foodservice.service;
 
-import com.bejlka.foodservice.domain.dto.DeliveryBodyDTO;
-import com.bejlka.foodservice.domain.dto.DeliveryDTO;
-import com.bejlka.foodservice.domain.dto.NotificationDTO;
-import com.bejlka.foodservice.domain.entity.Order;
-import com.bejlka.foodservice.domain.entity.User;
+import com.bejlka.foodservice.model.dto.DeliveryBodyDTO;
+import com.bejlka.foodservice.model.dto.DeliveryDTO;
+import com.bejlka.foodservice.model.dto.NotificationDTO;
+import com.bejlka.foodservice.model.domain.entity.Order;
+import com.bejlka.foodservice.model.domain.entity.User;
 import com.bejlka.foodservice.feign.DeliveryServiceClient;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DeliveryService {
+
     DeliveryServiceClient deliveryServiceClient;
     RabbitMQService rabbitMQService;
 

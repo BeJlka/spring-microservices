@@ -1,8 +1,8 @@
 package com.bejlka.foodservice.controller;
 
-import com.bejlka.foodservice.domain.dto.UserDTO;
-import com.bejlka.foodservice.domain.entity.Order;
-import com.bejlka.foodservice.domain.entity.User;
+import com.bejlka.foodservice.model.dto.UserDTO;
+import com.bejlka.foodservice.model.domain.entity.Order;
+import com.bejlka.foodservice.model.domain.entity.User;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.UserService;
 import lombok.AccessLevel;
@@ -24,16 +24,6 @@ public class UserController {
         return userService.getUserByLoginDTO(securityUser.getLogin());
     }
 
-    @GetMapping("/order")
-    public void createOrder(@AuthenticationPrincipal SecurityUser securityUser) {
-        userService.createOrder(userService.getUserByLogin(securityUser.getLogin()));
-    }
-
-    @GetMapping("/confirmation/{id}")
-    public void confirmation(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Order order) {
-        userService.confirmation(order);
-    }
-
     @PostMapping("/registration")
     public Long createUser(@RequestBody User user) {
         return userService.createUser(user);
@@ -41,7 +31,7 @@ public class UserController {
 
     @PutMapping()
     public UserDTO updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+        return userService.updateUserDTO(user);
     }
 
     @DeleteMapping("/{id}")

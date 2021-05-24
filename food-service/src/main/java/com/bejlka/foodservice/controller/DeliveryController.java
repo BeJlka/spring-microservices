@@ -1,6 +1,6 @@
 package com.bejlka.foodservice.controller;
 
-import com.bejlka.foodservice.domain.dto.DeliveryDTO;
+import com.bejlka.foodservice.model.dto.DeliveryDTO;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.DeliveryService;
 import com.bejlka.foodservice.service.UserService;

@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.security;
 
-import com.bejlka.foodservice.domain.entity.User;
-import com.bejlka.foodservice.domain.enums.Role;
+import com.bejlka.foodservice.model.domain.entity.User;
+import com.bejlka.foodservice.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

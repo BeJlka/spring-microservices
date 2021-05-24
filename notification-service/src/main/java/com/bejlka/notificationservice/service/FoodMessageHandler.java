@@ -32,6 +32,7 @@ public class FoodMessageHandler {
     public void receive(Message message) throws IOException, TemplateException, MessagingException {
         ObjectMapper objectMapper = new ObjectMapper();
         NotificationDTO notificationDTO = objectMapper.readValue(message.getBody(), NotificationDTO.class);
+        System.out.println(notificationDTO);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true,"UTF-8");
@@ -42,6 +43,6 @@ public class FoodMessageHandler {
         mimeMessageHelper.setFrom("ya@ya.com");
         mimeMessageHelper.setText(email, true);
         mimeMessageHelper.setSubject("Заказ №" + notificationDTO.getOrderId());
-        javaMailSender.send(mimeMessage);
+//        javaMailSender.send(mimeMessage);
     }
 }

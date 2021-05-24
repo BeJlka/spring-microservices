@@ -1,6 +1,6 @@
 package com.bejlka.foodservice.security;
 
-import com.bejlka.foodservice.domain.entity.User;
+import com.bejlka.foodservice.model.domain.entity.User;
 import com.bejlka.foodservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

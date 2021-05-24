@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.feign;
 
-import com.bejlka.foodservice.domain.dto.PaymentBodyDTO;
-import com.bejlka.foodservice.domain.dto.PaymentDTO;
+import com.bejlka.foodservice.model.dto.PaymentBodyDTO;
+import com.bejlka.foodservice.model.dto.PaymentDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

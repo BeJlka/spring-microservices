@@ -1,11 +1,11 @@
 package com.bejlka.foodservice.service;
 
-import com.bejlka.foodservice.domain.dto.CartDTO;
-import com.bejlka.foodservice.domain.entity.Cart;
-import com.bejlka.foodservice.domain.entity.CartItem;
-import com.bejlka.foodservice.domain.entity.MenuItem;
-import com.bejlka.foodservice.domain.entity.User;
-import com.bejlka.foodservice.domain.mapper.CartMapper;
+import com.bejlka.foodservice.model.dto.CartDTO;
+import com.bejlka.foodservice.model.domain.entity.Cart;
+import com.bejlka.foodservice.model.domain.entity.CartItem;
+import com.bejlka.foodservice.model.domain.entity.MenuItem;
+import com.bejlka.foodservice.model.domain.entity.User;
+import com.bejlka.foodservice.model.mapper.CartMapper;
 import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.CartRepository;
 import lombok.AccessLevel;
@@ -27,61 +27,41 @@ public class CartService {
     CartItemService cartItemService;
     CartMapper cartMapper;
 
-    public Cart createCart(Long id) {
-        Cart cart = new Cart();
-        cart.setUserId(id);
-        cart.setItems(new ArrayList<>());
-        return cartRepository.save(cart);
-    }
-
     public CartDTO getCart(Cart cart) {
         return cartMapper.cartToDTO(cart);
     }
 
     public CartDTO addItem(User user, MenuItem menuItem) {
         Cart cart = user.getCart();
-        if (cart == null) {
-            cart = createCart(user.getId());
-        }
         Optional<CartItem> optionalCartItem = cartItemService.findCartItem(cart, menuItem);
         if (optionalCartItem.isPresent()) {
-            cartItemService.increment(optionalCartItem.get());
+            optionalCartItem.get().increment();
         } else {
             if (cart.getItems().isEmpty() || cart.getItems().get(0).getRestaurant().equals(menuItem.getRestaurant())) {
                 cart.getItems().add(cartItemService.create(cart, menuItem));
-                cartRepository.save(cart);
             } else {
                 throw new CustomException(HttpStatus.BAD_REQUEST, "Очистите корзину прежде чем добавлять данный товар в нее");
             }
         }
+        cartRepository.save(cart);
         return cartMapper.cartToDTO(cart);
     }
 
-    public void remove(User user, MenuItem menuItem) {
-        Cart cart = user.getCart();
-        if (cart == null || cart.getItems().isEmpty()) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "Корзина пустая");
-        }
-        Optional<CartItem> optionalCartItem = cartItemService.findCartItem(cart, menuItem);
-        if (optionalCartItem.isPresent()) {
-            CartItem cartItem = optionalCartItem.get();
+    public void remove(User user,CartItem cartItem) {
             if (cartItem.getCount() > 1) {
-                cartItemService.decrement(cartItem);
+                cartItem.decrement();
             } else {
-                cart.getItems().remove(cartItem);
-                cartItemService.remove(cartItem);
+                user.getCart().getItems().remove(cartItem);
             }
-        }
-        cartRepository.save(cart);
+//        }
+        cartRepository.save(user.getCart());
     }
 
     public void removeAll(Cart cart) {
         if (cart.getItems().isEmpty()) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "Корзина пустая");
         }
-        List<CartItem> items = cart.getItems();
-        cart.setItems(new ArrayList<>());
-        cartItemService.removeAll(items);
+        cart.getItems().removeAll(cart.getItems());
         cartRepository.save(cart);
     }
 }

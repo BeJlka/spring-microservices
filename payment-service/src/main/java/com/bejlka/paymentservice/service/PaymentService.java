@@ -40,13 +40,13 @@ public class PaymentService {
         System.out.println(paymentRequestDTO.toString());
         payment.setUserId(paymentRequestDTO.getUserId());
         payment.setOrderId(paymentRequestDTO.getOrderId());
-        System.out.println(payment);
         if (myRandom.getRandomBoolean()) {
             payment.setStatus(Status.SUCCESS);
         } else {
             payment.setStatus(Status.FAIL);
         }
         payment.setPaymentDate(Instant.now());
+        System.out.println(payment);
         return paymentMapper.paymentToDTO(paymentRepository.save(payment));
     }
 
