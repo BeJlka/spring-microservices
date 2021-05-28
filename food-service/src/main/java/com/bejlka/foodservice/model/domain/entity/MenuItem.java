@@ -10,10 +10,11 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "app_menu_item")
 public class MenuItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "menu_seq")
-    @SequenceGenerator(sequenceName = "menu_seq", allocationSize = 1, name = "menu_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "menuitem_seq")
+    @SequenceGenerator(sequenceName = "menuitem_seq", allocationSize = 1, name = "menuitem_seq")
     private Long id;
     private String name;
     private Double price;

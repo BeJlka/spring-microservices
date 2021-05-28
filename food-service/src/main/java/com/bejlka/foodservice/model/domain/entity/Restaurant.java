@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "app_restaurant")
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restaurant_seq")

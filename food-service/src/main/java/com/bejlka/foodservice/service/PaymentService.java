@@ -32,33 +32,45 @@ public class PaymentService {
     }
 
     public void createPaymentCamunda(Long orderId) {
-        log.info("Payment: " + orderId);
-        Order order = orderService.find(orderId);
+        try {
+            log.info("Payment: " + orderId);
+            Order order = orderService.find(orderId);
 
-        PaymentBodyDTO body = new PaymentBodyDTO();
-        body.setOrderId(order.getId());
-        body.setUserId(order.getUserId());
-        PaymentDTO payment = paymentServiceClient.createPayment(body);
-        if (payment.getStatus().equals("SUCCESS")) {
-            order.setStatus(Status.COOKING);
-            orderService.update(order);
-        } else {
-            order.setStatus(Status.FAIL);
-            orderService.update(order);
-            throw new BpmnError(payment.getStatus());
+            PaymentBodyDTO body = new PaymentBodyDTO();
+            body.setOrderId(order.getId());
+            body.setUserId(order.getUserId());
+            PaymentDTO payment = paymentServiceClient.createPayment(body);
+            if (payment.getStatus().equals("SUCCESS")) {
+                order.setStatus(Status.COOKING);
+                orderService.update(order);
+            } else {
+                order.setStatus(Status.FAIL);
+                orderService.update(order);
+                throw new BpmnError(payment.getStatus());
+            }
+        } catch (Exception e) {
+            throw new BpmnError("PAYMENT_DOWN");
         }
     }
 
     public void errorPayment(Long orderId) {
-        Order order = orderService.find(orderId);
-        log.error("Fail payment: " + orderId);
-        paymentServiceClient.cancelPayment(orderId);
-        order.setStatus(Status.FAIL_PAYMENT);
-        orderService.update(order);
+        try {
+            Order order = orderService.find(orderId);
+            log.error("Fail payment: " + orderId);
+            paymentServiceClient.cancelPayment(orderId);
+            order.setStatus(Status.FAIL_PAYMENT);
+            orderService.update(order);
+        } catch (Exception e) {
+            throw new BpmnError("PAYMENT_DOWN");
+        }
     }
 
     public void cancelPayment(Long orderId) {
-        log.info("cancel payment: " + orderId);
-        paymentServiceClient.cancelPayment(orderId);
+        try {
+            log.info("cancel payment: " + orderId);
+            paymentServiceClient.cancelPayment(orderId);
+        } catch (Exception e) {
+            throw new BpmnError("PAYMENT_DOWN");
+        }
     }
 }

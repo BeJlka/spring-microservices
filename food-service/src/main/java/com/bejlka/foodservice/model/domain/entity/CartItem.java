@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "app_cart_item")
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cartitem_seq")

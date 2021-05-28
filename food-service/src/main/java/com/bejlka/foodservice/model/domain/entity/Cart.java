@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "app_cart")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_seq")

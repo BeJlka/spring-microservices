@@ -40,6 +40,6 @@ public class FoodMessageHandler {
         mimeMessageHelper.setFrom("ya@ya.com");
         mimeMessageHelper.setText(email, true);
         mimeMessageHelper.setSubject(emailTemplate.getSubject());
-        javaMailSender.send(mimeMessage);
+//        javaMailSender.send(mimeMessage);
     }
 }

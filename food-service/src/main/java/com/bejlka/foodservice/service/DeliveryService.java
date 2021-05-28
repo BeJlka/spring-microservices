@@ -25,48 +25,60 @@ public class DeliveryService {
     DeliveryServiceClient deliveryServiceClient;
 
     public void createDeliveryCamunda(Long orderId) {
-        log.info("Delivery create: " + orderId);
-        Order order = orderService.find(orderId);
-        DeliveryBodyDTO body = new DeliveryBodyDTO();
-        body.setOrderId(order.getId());
-        body.setUserId(order.getUser().getId());
-        body.setRestaurantAddress(order.getRestaurant().getAddress());
-        body.setDeliveryAddress(order.getUser().getAddress());
-        body.setOrderDate(order.getOrderDate());
-        DeliveryDTO delivery = deliveryServiceClient.createDelivery(body);
+        try {
+            log.info("Delivery create: " + orderId);
+            Order order = orderService.find(orderId);
+            DeliveryBodyDTO body = new DeliveryBodyDTO();
+            body.setOrderId(order.getId());
+            body.setUserId(order.getUser().getId());
+            body.setRestaurantAddress(order.getRestaurant().getAddress());
+            body.setDeliveryAddress(order.getUser().getAddress());
+            body.setOrderDate(order.getOrderDate());
+            DeliveryDTO delivery = deliveryServiceClient.createDelivery(body);
 
-        if (delivery.getStatus().equals("RECEIVED")) {
-            order.setStatus(Status.DELIVERY_RECEIVED);
-            orderService.update(order);
-        } else {
-            throw new BpmnError("FAIL_DELIVERY");
+            if (delivery.getStatus().equals("RECEIVED")) {
+                order.setStatus(Status.DELIVERY_RECEIVED);
+                orderService.update(order);
+            } else {
+                throw new BpmnError("FAIL_DELIVERY");
+            }
+        } catch (Exception e) {
+            throw new BpmnError("DELIVERY_DOWN");
         }
     }
 
     public void updateStatusDeliveryCamunda(Long orderId) {
-        log.info("Update status delivery: " + orderId);
-        Order order = orderService.find(orderId);
-        if (!order.getStatus().equals(Status.DELIVERY_DONE) || !order.getStatus().equals(Status.DONE)) {
-            DeliveryDTO deliveryDTO = deliveryServiceClient.updateStatusDelivery(orderId);
-            if (deliveryDTO == null) {
-                throw new BpmnError("FAIL_DELIVERY");
+        try {
+            log.info("Update status delivery: " + orderId);
+            Order order = orderService.find(orderId);
+            if (!order.getStatus().equals(Status.DELIVERY_DONE) || !order.getStatus().equals(Status.DONE)) {
+                DeliveryDTO deliveryDTO = deliveryServiceClient.updateStatusDelivery(orderId);
+                if (deliveryDTO == null) {
+                    throw new BpmnError("FAIL_DELIVERY");
+                }
+                if (deliveryDTO.getStatus().equals("DELIVERY")) {
+                    order.setStatus(Status.DELIVERY);
+                }
+                if (deliveryDTO.getStatus().equals("DONE")) {
+                    order.setStatus(Status.DELIVERY_DONE);
+                }
+                orderService.update(order);
             }
-            if (deliveryDTO.getStatus().equals("DELIVERY")) {
-                order.setStatus(Status.DELIVERY);
-            }
-            if (deliveryDTO.getStatus().equals("DONE")) {
-                order.setStatus(Status.DELIVERY_DONE);
-            }
-            orderService.update(order);
+        } catch (Exception e) {
+            throw new BpmnError("DELIVERY_DOWN");
         }
     }
 
     public void cancelDelivery(Long orderId) {
-        log.error("cancel delivery: " + orderId);
-        Order order = orderService.find(orderId);
-        order.setStatus(Status.FAIL_DELIVERY);
-        orderService.update(order);
-        deliveryServiceClient.cancelDelivery(orderId);
+        try {
+            log.error("cancel delivery: " + orderId);
+            Order order = orderService.find(orderId);
+            order.setStatus(Status.FAIL_DELIVERY);
+            orderService.update(order);
+            deliveryServiceClient.cancelDelivery(orderId);
+        } catch (Exception e) {
+            throw new BpmnError("DELIVERY_DOWN");
+        }
     }
 
     public List<DeliveryDTO> deliveryAll(User user) {
