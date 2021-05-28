@@ -1,8 +1,8 @@
 package com.bejlka.foodservice.controller;
 
 import com.bejlka.foodservice.model.domain.entity.CartItem;
-import com.bejlka.foodservice.model.dto.CartDTO;
 import com.bejlka.foodservice.model.domain.entity.MenuItem;
+import com.bejlka.foodservice.model.dto.CartDTO;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.CartService;
 import com.bejlka.foodservice.service.UserService;
@@ -32,7 +32,7 @@ public class CartController {
     }
 
     @DeleteMapping("/items/{id}")
-    public void removeItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id")CartItem cartItem) {
+    public void removeItem(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") CartItem cartItem) {
         cartService.remove(userService.getUserByLogin(securityUser.getLogin()), cartItem);
     }
 

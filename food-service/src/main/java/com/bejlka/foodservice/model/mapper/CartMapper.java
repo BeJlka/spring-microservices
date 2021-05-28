@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.model.mapper;
 
-import com.bejlka.foodservice.model.dto.CartDTO;
 import com.bejlka.foodservice.model.domain.entity.Cart;
+import com.bejlka.foodservice.model.dto.CartDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

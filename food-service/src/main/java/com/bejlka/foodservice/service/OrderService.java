@@ -1,13 +1,13 @@
 package com.bejlka.foodservice.service;
 
 import com.bejlka.foodservice.exeption.CustomException;
+import com.bejlka.foodservice.feign.DeliveryServiceClient;
+import com.bejlka.foodservice.feign.PaymentServiceClient;
 import com.bejlka.foodservice.model.domain.entity.Cart;
 import com.bejlka.foodservice.model.domain.entity.Order;
 import com.bejlka.foodservice.model.domain.entity.User;
-import com.bejlka.foodservice.model.dto.DeliveryDTO;
 import com.bejlka.foodservice.model.dto.NotificationDTO;
 import com.bejlka.foodservice.model.dto.OrderDTO;
-import com.bejlka.foodservice.model.dto.PaymentDTO;
 import com.bejlka.foodservice.model.enums.Status;
 import com.bejlka.foodservice.model.mapper.OrderItemMapper;
 import com.bejlka.foodservice.model.mapper.OrderMapper;
@@ -15,27 +15,32 @@ import com.bejlka.foodservice.repository.OrderRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.camunda.bpm.engine.RuntimeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OrderService {
 
+    RuntimeService runtimeService;
+    PaymentServiceClient paymentServiceClient;
+    DeliveryServiceClient deliveryServiceClient;
     OrderRepository orderRepository;
     OrderItemMapper orderItemMapper;
     UserService userService;
     CartService cartService;
-    PaymentService paymentService;
-    RabbitMQService rabbitMQService;
-    DeliveryService deliveryService;
     OrderMapper orderMapper;
 
     @Transactional
@@ -48,49 +53,22 @@ public class OrderService {
         order.setUser(user);
         order.setAddress(user.getAddress());
         order.setRestaurant(cart.getItems().get(0).getRestaurant());
-        order.getItems().addAll(orderItemMapper.cartItemToOrderItem(cart.getItems())
-                .stream().peek(orderItem -> orderItem.setOrder(order)).collect(Collectors.toList()));
-        order.setAmount(order.getItems().stream().mapToDouble(item -> item.getPrice() * item.getCount()).sum());
         order.setOrderDate(Instant.now());
         order.setStatus(Status.CREATE);
+        orderRepository.save(order);
+        orderItemMapper.cartItemToOrderItem(cart.getItems())
+                .stream().peek(order::addOrderItemToOrder).collect(Collectors.toList());
+        order.setAmount(order.getItems().stream().mapToDouble(item -> item.getPrice() * item.getCount()).sum());
         user.getOrders().add(order);
         cartService.removeAll(user.getCart());
         userService.updateUser(user);
 
-        NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.setEmail(user.getEmail());
-        notificationDTO.setOrderId(user.getOrders().get(user.getOrders().size() - 1).getId());
+        log.info("create order " + order.getId());
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderId", order.getId());
+        runtimeService.startProcessInstanceByKey("notification", map);
 
-        notificationDTO.setTitle("Оформление заказа");
-        PaymentDTO payment = paymentService.createPayment(user.getId(), user.getOrders().get(user.getOrders().size() - 1).getId());
-        if (payment.getStatus().equals("SUCCESS")) {
-            notificationDTO.setMessage("Оплата прошла успешно");
-            rabbitMQService.sendMessage(notificationDTO);
-            order.setStatus(Status.COOKING);
-        } else {
-            notificationDTO.setMessage("Что-то пошло не так во вроемя оплаты. Попробуйте еще раз");
-            rabbitMQService.sendMessage(notificationDTO);
-        }
-
-        return orderMapper.map(order, payment, null);
-    }
-
-    @Transactional
-    public OrderDTO orderRepeatPayment(Order order) {
-        PaymentDTO paymentDTO = paymentService.updatePayment(order.getId());
-        if (paymentDTO.getOrderId().equals(order.getId())) {
-            order.setStatus(Status.COOKING);
-            update(order);
-
-            NotificationDTO notificationDTO = new NotificationDTO();
-            notificationDTO.setEmail(order.getUser().getEmail());
-            notificationDTO.setOrderId(order.getId());
-            notificationDTO.setTitle("Оплата");
-            notificationDTO.setMessage("Оплата прошла успешно и ресторан приступил к готовке");
-
-            rabbitMQService.sendMessage(notificationDTO);
-        }
-        return orderMapper.map(order, paymentDTO, null);
+        return orderMapper.map(order, null, null);
     }
 
     public List<OrderDTO> getAllOrder(User user) {
@@ -101,8 +79,8 @@ public class OrderService {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isPresent()) {
             return orderMapper.map(optionalOrder.get(),
-                    paymentService.payment(optionalOrder.get().getId()),
-                    deliveryService.delivery(optionalOrder.get().getId()));
+                    paymentServiceClient.getPayment(optionalOrder.get().getId()),
+                    deliveryServiceClient.delivery(optionalOrder.get().getId()));
         }
         throw new CustomException(HttpStatus.NOT_FOUND, "Чек с таким id не найден: " + id);
     }
@@ -119,6 +97,23 @@ public class OrderService {
         orderRepository.save(order);
     }
 
+    public void updateStatusOrderCamunda(Long orderId) {
+        Order order = find(orderId);
+        if (order.getStatus().equals(Status.DONE)) {
+            return;
+        }
+        if (order.getStatus().equals(Status.DELIVERY_DONE)) {
+            order.setStatus(Status.DONE);
+            update(order);
+        }
+    }
+
+    public void cancelOrder(Long id) {
+        Order order = find(id);
+        order.setStatus(Status.CANCEL);
+        update(order);
+    }
+
     public void updateStatusOrder(Order order) {
 
         if (order.getStatus().equals(Status.DONE)) {
@@ -128,31 +123,5 @@ public class OrderService {
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setEmail(order.getUser().getEmail());
         notificationDTO.setOrderId(order.getId());
-
-        if (order.getStatus().equals(Status.DELIVERY)) {
-            DeliveryDTO delivery = deliveryService.delivery(order.getId());
-            if (delivery.getStatus().equals("DONE")) {
-
-                notificationDTO.setTitle("Отзыв");
-                notificationDTO.setMessage("Пожалуйста оцените качество доставки и оставьте свой отзыв.");
-
-                rabbitMQService.sendMessage(notificationDTO);
-                order.setStatus(Status.DONE);
-                order.setDeliveryDate(delivery.getDeliveryDate());
-                update(order);
-            }
-        }
-
-        if (order.getStatus().equals(Status.COOKING)) {
-            order.setStatus(Status.DELIVERY);
-
-            notificationDTO.setTitle("Ресторан");
-            notificationDTO.setMessage("Ресторан закончил готовить заказ и передал его службе доставки");
-
-            rabbitMQService.sendMessage(notificationDTO);
-            deliveryService.createDelivery(order);
-            update(order);
-        }
-
     }
 }

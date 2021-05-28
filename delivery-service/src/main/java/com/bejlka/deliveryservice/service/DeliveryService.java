@@ -66,4 +66,14 @@ public class DeliveryService {
         }
         throw new CustomException(HttpStatus.NOT_FOUND, "У пользователя нет доставок");
     }
+
+    public DeliveryDTO cancelDelivery(Long id) {
+        Optional<Delivery> optionalDelivery = deliveryRepository.findById(id);
+        if (!optionalDelivery.isPresent()) {
+            return null;
+        }
+        optionalDelivery.get().setStatus(Status.CANCEL);
+        return deliveryMapping.DeliveryToDTO(deliveryRepository.save(optionalDelivery.get()));
+
+    }
 }

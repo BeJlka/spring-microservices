@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class NotificationDTO {
     private String email;
+    private String name;
     private Long orderId;
-    private String title;
-    private String message;
+    private double amount;
+    private String status;
 }

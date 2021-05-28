@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.controller;
 
-import com.bejlka.foodservice.model.dto.OrderDTO;
 import com.bejlka.foodservice.model.domain.entity.Order;
+import com.bejlka.foodservice.model.dto.OrderDTO;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.OrderService;
 import com.bejlka.foodservice.service.UserService;
@@ -32,10 +32,10 @@ public class OrderController {
         return orderService.getOrder(id);
     }
 
-    @GetMapping("/repeat/{id}")
-    public OrderDTO orderRepeatPayment(@PathVariable("id") Order order) {
-        return orderService.orderRepeatPayment(order);
-    }
+//    @GetMapping("/repeat/{id}")
+//    public OrderDTO orderRepeatPayment(@PathVariable("id") Order order) {
+//        return orderService.orderRepeatPayment(order);
+//    }
 
     @PostMapping()
     public OrderDTO createOrder(@AuthenticationPrincipal SecurityUser securityUser) {

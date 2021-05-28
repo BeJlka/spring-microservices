@@ -21,4 +21,7 @@ public interface DeliveryServiceClient {
 
     @PutMapping("/deliveries/{id}")
     DeliveryDTO updateStatusDelivery(@PathVariable("id") Long id);
+
+    @PutMapping("/deliveries/cancel/{id}")
+    DeliveryDTO cancelDelivery(@PathVariable("id") Long id);
 }

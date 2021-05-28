@@ -27,7 +27,7 @@ public class OrderItem {
 
     private Integer count = 1;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "order_id")
     private Order order;
 

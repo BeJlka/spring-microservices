@@ -35,4 +35,9 @@ public class DeliveryController {
     public DeliveryDTO updateDelivery(@PathVariable("id") Long id) {
         return deliveryService.updateStatusDelivery(id);
     }
+
+    @PutMapping("/cancel/{id}")
+    public DeliveryDTO cancelDelivery(@PathVariable("id") Long id) {
+        return deliveryService.cancelDelivery(id);
+    }
 }

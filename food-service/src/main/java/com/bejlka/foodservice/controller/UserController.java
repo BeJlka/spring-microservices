@@ -1,8 +1,7 @@
 package com.bejlka.foodservice.controller;
 
-import com.bejlka.foodservice.model.dto.UserDTO;
-import com.bejlka.foodservice.model.domain.entity.Order;
 import com.bejlka.foodservice.model.domain.entity.User;
+import com.bejlka.foodservice.model.dto.UserDTO;
 import com.bejlka.foodservice.security.SecurityUser;
 import com.bejlka.foodservice.service.UserService;
 import lombok.AccessLevel;

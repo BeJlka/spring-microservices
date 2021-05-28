@@ -1,9 +1,9 @@
 package com.bejlka.foodservice.controller;
 
-import com.bejlka.foodservice.model.dto.MenuItemDTO;
-import com.bejlka.foodservice.model.dto.RestaurantDTO;
 import com.bejlka.foodservice.model.domain.entity.MenuItem;
 import com.bejlka.foodservice.model.domain.entity.Restaurant;
+import com.bejlka.foodservice.model.dto.MenuItemDTO;
+import com.bejlka.foodservice.model.dto.RestaurantDTO;
 import com.bejlka.foodservice.service.RestaurantService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

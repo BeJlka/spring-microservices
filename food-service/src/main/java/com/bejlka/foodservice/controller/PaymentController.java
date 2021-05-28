@@ -10,7 +10,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,8 +31,8 @@ public class PaymentController {
         return paymentService.paymentsAll(userService.getUserByLogin(securityUser.getLogin()));
     }
 
-    @PutMapping("/payments/{id}")
-    public PaymentDTO paymentUpdate(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
-        return paymentService.updatePayment(id);
-    }
+//    @PutMapping("/payments/{id}")
+//    public PaymentDTO paymentUpdate(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
+//        return paymentService.updatePayment(id);
+//    }
 }

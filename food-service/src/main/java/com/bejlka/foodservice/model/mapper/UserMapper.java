@@ -1,7 +1,7 @@
 package com.bejlka.foodservice.model.mapper;
 
-import com.bejlka.foodservice.model.dto.UserDTO;
 import com.bejlka.foodservice.model.domain.entity.User;
+import com.bejlka.foodservice.model.dto.UserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

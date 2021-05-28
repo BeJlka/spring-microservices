@@ -24,4 +24,7 @@ public interface PaymentServiceClient {
 
     @PutMapping("/payments/{id}")
     PaymentDTO updatePayment(@PathVariable("id") Long id);
+
+    @PutMapping("/payments/cancel/{id}")
+    PaymentDTO cancelPayment(@PathVariable("id") Long id);
 }

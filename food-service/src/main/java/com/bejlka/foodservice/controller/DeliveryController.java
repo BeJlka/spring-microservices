@@ -8,7 +8,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -30,8 +33,8 @@ public class DeliveryController {
         return deliveryService.deliveryAll(userService.getUserByLogin(securityUser.getLogin()));
     }
 
-    @PutMapping("/{id}")
-    public DeliveryDTO paymentUpdate(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
-        return deliveryService.updateStatusDelivery(userService.getUserByLogin(securityUser.getLogin()), id);
-    }
+//    @PutMapping("/{id}")
+//    public DeliveryDTO paymentUpdate(@AuthenticationPrincipal SecurityUser securityUser, @PathVariable("id") Long id) {
+//        return deliveryService.updateStatusDelivery(userService.getUserByLogin(securityUser.getLogin()), id);
+//    }
 }

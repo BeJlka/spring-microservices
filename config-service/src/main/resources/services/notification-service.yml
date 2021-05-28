@@ -12,6 +12,35 @@ spring:
     listener:
       direct:
         default-requeue-rejected: true
+application:
+  templates:
+    create:
+      path: create.ftl
+      subject: Новый заказ
+    cooking:
+      path: cooking.ftl
+      subject: Заказ готовиться
+    delivery_received:
+      path: delivery_received.ftl
+      subject: Заказ передан в доставку
+    delivery:
+      path: delivery.ftl
+      subject: Заказ доставляется
+    delivery_done:
+      path: delivery_done.ftl
+      subject: Заказ доставлен
+    done:
+      path: done.ftl
+      subject: Оцените наш сервис
+    fail_payment:
+      path: fail_payment.ftl
+      subject: Что-то пошло не так
+    fail_delivery:
+      path: fail_delivery.ftl
+      subject: Что-то пошло не так
+    cancel:
+      path: cancel.ftl
+      subject: Заказ отменен
 
 rabbitmq:
   queue-food: food.notify

@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1e7dkcn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.8.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="notification" name="foodBPMN" isExecutable="true">
+    <bpmn:serviceTask id="Activity_1e3sfha" name="уведомление о создании заказа" camunda:asyncBefore="true" camunda:exclusive="false" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_1ttq5o6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1t2fne8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0gvu8zc" name="Заказ доставлен">
+      <bpmn:incoming>Flow_0biss14</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="Event_0etd6oc" name="Создание заказа">
+      <bpmn:outgoing>Flow_1ttq5o6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1ttq5o6" sourceRef="Event_0etd6oc" targetRef="Activity_1e3sfha" />
+    <bpmn:sequenceFlow id="Flow_1t2fne8" sourceRef="Activity_1e3sfha" targetRef="Activity_081mqha" />
+    <bpmn:sequenceFlow id="Flow_052y263" sourceRef="Activity_081mqha" targetRef="Activity_1eewdst" />
+    <bpmn:serviceTask id="Activity_081mqha" name="оплата" camunda:asyncBefore="true" camunda:exclusive="false" camunda:expression="#{paymentService.createPaymentCamunda(orderId)}">
+      <bpmn:incoming>Flow_1t2fne8</bpmn:incoming>
+      <bpmn:outgoing>Flow_052y263</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1eewdst" name="уведомление об успешной оплате" camunda:asyncBefore="true" camunda:exclusive="false" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_052y263</bpmn:incoming>
+      <bpmn:outgoing>Flow_0j3ew1s</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0j3ew1s" sourceRef="Activity_1eewdst" targetRef="Activity_0o5qopp" />
+    <bpmn:boundaryEvent id="Event_0da887c" name="ошибка оплаты" camunda:asyncBefore="true" attachedToRef="Activity_081mqha">
+      <bpmn:outgoing>Flow_1xzd199</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1o3k03n" errorRef="Error_17cofua" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_1ic84ox">
+      <bpmn:incoming>Flow_1tu55kr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0dzlcop" name="Оплата не подтверждена" camunda:asyncBefore="true" camunda:expression="#{paymentService.errorPayment(orderId)}">
+      <bpmn:incoming>Flow_1xzd199</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ur03e7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1au0m8m" name="Уведомление об возврате средств" camunda:asyncBefore="true" camunda:exclusive="false" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_0ur03e7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0op0fs9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0ujlv9t" sourceRef="Activity_0o5qopp" targetRef="Activity_007xtrb" />
+    <bpmn:serviceTask id="Activity_0o5qopp" name="Заказ готов и передан в доставку" camunda:asyncBefore="true" camunda:expression="#{deliveryService.createDeliveryCamunda(orderId)}">
+      <bpmn:incoming>Flow_0j3ew1s</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ujlv9t</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_007xtrb" name="Уведомление о статусе заказа" camunda:asyncBefore="true" camunda:exclusive="false" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_0ujlv9t</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sua3sq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1sua3sq" sourceRef="Activity_007xtrb" targetRef="Activity_00iu20d" />
+    <bpmn:serviceTask id="Activity_00iu20d" name="Обновление статуса доставки" camunda:asyncBefore="true" camunda:expression="#{deliveryService.updateStatusDeliveryCamunda(orderId)}">
+      <bpmn:incoming>Flow_1sua3sq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0glgbh0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0glgbh0" sourceRef="Activity_00iu20d" targetRef="Activity_1gizgp7" />
+    <bpmn:serviceTask id="Activity_1gizgp7" name="Уведомление о статусе заказа" camunda:asyncBefore="true" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_0glgbh0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cs3zca</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1cs3zca" sourceRef="Activity_1gizgp7" targetRef="Activity_0zy2hh1" />
+    <bpmn:serviceTask id="Activity_0zy2hh1" name="Курьер доставил заказ" camunda:asyncBefore="true" camunda:expression="#{deliveryService.updateStatusDeliveryCamunda(orderId)}">
+      <bpmn:incoming>Flow_1cs3zca</bpmn:incoming>
+      <bpmn:outgoing>Flow_051y41x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_16lb288" name="Уведомление о доставке" camunda:asyncBefore="true" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_051y41x</bpmn:incoming>
+      <bpmn:outgoing>Flow_1524zfd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1524zfd" sourceRef="Activity_16lb288" targetRef="Activity_0kpb6sq" />
+    <bpmn:sequenceFlow id="Flow_051y41x" sourceRef="Activity_0zy2hh1" targetRef="Activity_16lb288" />
+    <bpmn:serviceTask id="Activity_0kpb6sq" name="Заказ выполен" camunda:asyncBefore="true" camunda:expression="#{orderService.updateStatusOrderCamunda(orderId)}">
+      <bpmn:incoming>Flow_1524zfd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wqz81i</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1wqz81i" sourceRef="Activity_0kpb6sq" targetRef="Activity_0s4l5je" />
+    <bpmn:serviceTask id="Activity_0s4l5je" name="Отзыв" camunda:asyncBefore="true" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_1wqz81i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0biss14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0biss14" sourceRef="Activity_0s4l5je" targetRef="Event_0gvu8zc" />
+    <bpmn:sequenceFlow id="Flow_19rrf7e" sourceRef="Activity_0sg9u8y" targetRef="Activity_1i283ey" />
+    <bpmn:serviceTask id="Activity_0sg9u8y" name="Отмена доставки" camunda:asyncBefore="true" camunda:expression="#{deliveryService.cancelDelivery(orderId)}">
+      <bpmn:incoming>Flow_1lal68w</bpmn:incoming>
+      <bpmn:incoming>Flow_0a6y18v</bpmn:incoming>
+      <bpmn:incoming>Flow_09ptkgz</bpmn:incoming>
+      <bpmn:outgoing>Flow_19rrf7e</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1i283ey" name="Уведомление" camunda:asyncBefore="true" camunda:exclusive="false" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_19rrf7e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wekoqd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0a85tc9" name="Отмена заказа" camunda:asyncBefore="true" camunda:expression="#{orderService.cancelOrder(orderId)}">
+      <bpmn:incoming>Flow_0op0fs9</bpmn:incoming>
+      <bpmn:incoming>Flow_0qpr7g8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0falb2k</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0falb2k" sourceRef="Activity_0a85tc9" targetRef="Activity_0n19w5m" />
+    <bpmn:sequenceFlow id="Flow_0op0fs9" sourceRef="Activity_1au0m8m" targetRef="Activity_0a85tc9" />
+    <bpmn:sequenceFlow id="Flow_0ur03e7" sourceRef="Activity_0dzlcop" targetRef="Activity_1au0m8m" />
+    <bpmn:sequenceFlow id="Flow_1xzd199" sourceRef="Event_0da887c" targetRef="Activity_0dzlcop" />
+    <bpmn:serviceTask id="Activity_0n19w5m" name="Уведомление об отмене" camunda:asyncBefore="true" camunda:exclusive="false" camunda:expression="#{rabbitMQService.sendMessage(orderId)}">
+      <bpmn:incoming>Flow_0falb2k</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tu55kr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1tu55kr" sourceRef="Activity_0n19w5m" targetRef="Event_1ic84ox" />
+    <bpmn:boundaryEvent id="Event_1xtpi2w" attachedToRef="Activity_0o5qopp">
+      <bpmn:outgoing>Flow_1lal68w</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_15nvyqs" errorRef="Error_1b6v1ff" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1lal68w" sourceRef="Event_1xtpi2w" targetRef="Activity_0sg9u8y" />
+    <bpmn:boundaryEvent id="Event_08q2oh6" attachedToRef="Activity_00iu20d">
+      <bpmn:outgoing>Flow_0a6y18v</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1twzsrw" errorRef="Error_1b6v1ff" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0a6y18v" sourceRef="Event_08q2oh6" targetRef="Activity_0sg9u8y" />
+    <bpmn:boundaryEvent id="Event_198zlte" attachedToRef="Activity_0zy2hh1">
+      <bpmn:outgoing>Flow_09ptkgz</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0mmdc4r" errorRef="Error_1b6v1ff" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_09ptkgz" sourceRef="Event_198zlte" targetRef="Activity_0sg9u8y" />
+    <bpmn:sequenceFlow id="Flow_0wekoqd" sourceRef="Activity_1i283ey" targetRef="Activity_1gdlcnm" />
+    <bpmn:sequenceFlow id="Flow_0qpr7g8" sourceRef="Activity_1gdlcnm" targetRef="Activity_0a85tc9" />
+    <bpmn:serviceTask id="Activity_1gdlcnm" name="Возврат денежных средств" camunda:asyncBefore="true" camunda:expression="#{paymentService.cancelPayment(orderId)}">
+      <bpmn:incoming>Flow_0wekoqd</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qpr7g8</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:message id="Message_1jqlu5z" />
+  <bpmn:message id="Message_1mnxvk5" />
+  <bpmn:message id="Message_1lyb4m8" name="startMessage" />
+  <bpmn:error id="Error_0rget1q" name="Error_2sorrnk" />
+  <bpmn:error id="Error_1u4oysg" name="Error_2ddkegu" />
+  <bpmn:error id="Error_17cofua" name="Error_38hlni7" errorCode="FAIL" />
+  <bpmn:error id="Error_1b6v1ff" name="Error_3hi9jrh" errorCode="FAIL_DELIVERY" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="notification">
+      <bpmndi:BPMNEdge id="Flow_052y263_di" bpmnElement="Flow_052y263">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1t2fne8_di" bpmnElement="Flow_1t2fne8">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ttq5o6_di" bpmnElement="Flow_1ttq5o6">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j3ew1s_di" bpmnElement="Flow_0j3ew1s">
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="730" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xzd199_di" bpmnElement="Flow_1xzd199">
+        <di:waypoint x="480" y="178" />
+        <di:waypoint x="480" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ur03e7_di" bpmnElement="Flow_0ur03e7">
+        <di:waypoint x="480" y="320" />
+        <di:waypoint x="480" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ujlv9t_di" bpmnElement="Flow_0ujlv9t">
+        <di:waypoint x="830" y="120" />
+        <di:waypoint x="900" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sua3sq_di" bpmnElement="Flow_1sua3sq">
+        <di:waypoint x="1000" y="120" />
+        <di:waypoint x="1070" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0glgbh0_di" bpmnElement="Flow_0glgbh0">
+        <di:waypoint x="1170" y="120" />
+        <di:waypoint x="1240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cs3zca_di" bpmnElement="Flow_1cs3zca">
+        <di:waypoint x="1340" y="120" />
+        <di:waypoint x="1410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1524zfd_di" bpmnElement="Flow_1524zfd">
+        <di:waypoint x="1690" y="120" />
+        <di:waypoint x="1760" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_051y41x_di" bpmnElement="Flow_051y41x">
+        <di:waypoint x="1510" y="120" />
+        <di:waypoint x="1590" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wqz81i_di" bpmnElement="Flow_1wqz81i">
+        <di:waypoint x="1860" y="120" />
+        <di:waypoint x="1930" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0biss14_di" bpmnElement="Flow_0biss14">
+        <di:waypoint x="2030" y="120" />
+        <di:waypoint x="2092" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19rrf7e_di" bpmnElement="Flow_19rrf7e">
+        <di:waypoint x="760" y="280" />
+        <di:waypoint x="690" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0op0fs9_di" bpmnElement="Flow_0op0fs9">
+        <di:waypoint x="480" y="450" />
+        <di:waypoint x="480" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0falb2k_di" bpmnElement="Flow_0falb2k">
+        <di:waypoint x="480" y="580" />
+        <di:waypoint x="480" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tu55kr_di" bpmnElement="Flow_1tu55kr">
+        <di:waypoint x="480" y="700" />
+        <di:waypoint x="480" y="732" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lal68w_di" bpmnElement="Flow_1lal68w">
+        <di:waypoint x="810" y="178" />
+        <di:waypoint x="810" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a6y18v_di" bpmnElement="Flow_0a6y18v">
+        <di:waypoint x="1150" y="178" />
+        <di:waypoint x="1150" y="270" />
+        <di:waypoint x="860" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09ptkgz_di" bpmnElement="Flow_09ptkgz">
+        <di:waypoint x="1490" y="178" />
+        <di:waypoint x="1490" y="300" />
+        <di:waypoint x="860" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wekoqd_di" bpmnElement="Flow_0wekoqd">
+        <di:waypoint x="640" y="320" />
+        <di:waypoint x="640" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qpr7g8_di" bpmnElement="Flow_0qpr7g8">
+        <di:waypoint x="640" y="450" />
+        <di:waypoint x="640" y="540" />
+        <di:waypoint x="530" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_01rotl6_di" bpmnElement="Activity_1e3sfha">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0etd6oc_di" bpmnElement="Event_0etd6oc">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="152" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07xn4ii_di" bpmnElement="Activity_081mqha">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1eewdst_di" bpmnElement="Activity_1eewdst">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00bi1wf_di" bpmnElement="Activity_0dzlcop">
+        <dc:Bounds x="430" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17ja3vc_di" bpmnElement="Activity_0o5qopp">
+        <dc:Bounds x="730" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_007xtrb_di" bpmnElement="Activity_007xtrb">
+        <dc:Bounds x="900" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00iu20d_di" bpmnElement="Activity_00iu20d">
+        <dc:Bounds x="1070" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16lb288_di" bpmnElement="Activity_16lb288">
+        <dc:Bounds x="1590" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gizgp7_di" bpmnElement="Activity_1gizgp7">
+        <dc:Bounds x="1240" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zy2hh1_di" bpmnElement="Activity_0zy2hh1">
+        <dc:Bounds x="1410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kpb6sq_di" bpmnElement="Activity_0kpb6sq">
+        <dc:Bounds x="1760" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0s4l5je_di" bpmnElement="Activity_0s4l5je">
+        <dc:Bounds x="1930" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gvu8zc_di" bpmnElement="Event_0gvu8zc">
+        <dc:Bounds x="2092" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2069" y="145" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1i283ey_di" bpmnElement="Activity_1i283ey">
+        <dc:Bounds x="590" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1au0m8m_di" bpmnElement="Activity_1au0m8m">
+        <dc:Bounds x="430" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p910c0_di" bpmnElement="Activity_0a85tc9">
+        <dc:Bounds x="430" y="500" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ic84ox_di" bpmnElement="Event_1ic84ox">
+        <dc:Bounds x="462" y="732" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0n19w5m_di" bpmnElement="Activity_0n19w5m">
+        <dc:Bounds x="430" y="620" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tedtiq_di" bpmnElement="Activity_0sg9u8y">
+        <dc:Bounds x="760" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dm9jxd_di" bpmnElement="Activity_1gdlcnm">
+        <dc:Bounds x="590" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0di84ys_di" bpmnElement="Event_0da887c">
+        <dc:Bounds x="462" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="442" y="185" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0e300ia_di" bpmnElement="Event_1xtpi2w">
+        <dc:Bounds x="792" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0z1rqf7_di" bpmnElement="Event_08q2oh6">
+        <dc:Bounds x="1132" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gqiyj9_di" bpmnElement="Event_198zlte">
+        <dc:Bounds x="1472" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

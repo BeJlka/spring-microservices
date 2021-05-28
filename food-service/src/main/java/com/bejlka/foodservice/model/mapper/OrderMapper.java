@@ -1,9 +1,9 @@
 package com.bejlka.foodservice.model.mapper;
 
+import com.bejlka.foodservice.model.domain.entity.Order;
 import com.bejlka.foodservice.model.dto.DeliveryDTO;
 import com.bejlka.foodservice.model.dto.OrderDTO;
 import com.bejlka.foodservice.model.dto.PaymentDTO;
-import com.bejlka.foodservice.model.domain.entity.Order;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

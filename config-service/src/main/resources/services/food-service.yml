@@ -3,7 +3,7 @@ spring:
     database: POSTGRESQL
     properties.hibernate.temp.use_jdbc_metadata_defaults: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
   datasource:
     platform: postgres
@@ -12,6 +12,17 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
 
+#camunda:
+#  bpm:
+#    run.cors:
+#      enabled: true
+#    admin-user:
+#      password: demo
+#      id: demo
+#      first-name: Demo
+#      last-name: Demo
+#    database:
+#      schema-name: camunda
 
 rabbitmq:
   topic-exchange-food: food.notify.exchange

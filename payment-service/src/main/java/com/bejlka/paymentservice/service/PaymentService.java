@@ -59,4 +59,13 @@ public class PaymentService {
         }
         throw new CustomException(HttpStatus.NOT_FOUND, "Чек с таким id не найден: " + id);
     }
+
+    public PaymentDTO cancelPayment(Long id) {
+        Optional<Payment> optionalPayment = paymentRepository.findById(id);
+        if (!optionalPayment.isPresent()) {
+            return null;
+        }
+        optionalPayment.get().setStatus(Status.CANCEL);
+        return paymentMapper.paymentToDTO(paymentRepository.save(optionalPayment.get()));
+    }
 }

@@ -1,12 +1,12 @@
 package com.bejlka.foodservice.service;
 
-import com.bejlka.foodservice.model.dto.CartDTO;
+import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.model.domain.entity.Cart;
 import com.bejlka.foodservice.model.domain.entity.CartItem;
 import com.bejlka.foodservice.model.domain.entity.MenuItem;
 import com.bejlka.foodservice.model.domain.entity.User;
+import com.bejlka.foodservice.model.dto.CartDTO;
 import com.bejlka.foodservice.model.mapper.CartMapper;
-import com.bejlka.foodservice.exeption.CustomException;
 import com.bejlka.foodservice.repository.CartRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,12 +45,12 @@ public class CartService {
         return cartMapper.cartToDTO(cart);
     }
 
-    public void remove(User user,CartItem cartItem) {
-            if (cartItem.getCount() > 1) {
-                cartItem.decrement();
-            } else {
-                user.getCart().getItems().remove(cartItem);
-            }
+    public void remove(User user, CartItem cartItem) {
+        if (cartItem.getCount() > 1) {
+            cartItem.decrement();
+        } else {
+            user.getCart().getItems().remove(cartItem);
+        }
 //        }
         cartRepository.save(user.getCart());
     }

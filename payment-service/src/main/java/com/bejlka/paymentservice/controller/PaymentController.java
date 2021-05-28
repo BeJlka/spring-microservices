@@ -35,4 +35,9 @@ public class PaymentController {
     public PaymentDTO updatePayment(@PathVariable("id") Long id) {
         return paymentService.updatePayment(id);
     }
+
+    @PutMapping("/cancel/{id}")
+    public PaymentDTO cancelPayment(@PathVariable("id") Long id) {
+        return paymentService.cancelPayment(id);
+    }
 }
