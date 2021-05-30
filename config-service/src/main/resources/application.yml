@@ -1,9 +1,11 @@
 spring:
+  application:
+    name: config-service
   cloud:
     config:
       server:
         native:
-          search-locations: classpath:/services
+          search-locations: "[classpath:/, classpath:/services, classpath:/services/{application}]"
   profiles:
     active: native
   security:

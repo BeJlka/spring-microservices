@@ -1,0 +1,141 @@
+databaseChangeLog:
+  - changeSet:
+      id: data_cart
+      author: n.gurev
+      changes:
+        - insert:
+            tableName: app_cart
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+
+  - changeSet:
+      id: data_user
+      author: n.gurev
+      changes:
+        - insert:
+            tableName: app_user
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: name
+                  value: "Nikita"
+              - column:
+                  name: role
+                  value: "USER"
+              - column:
+                  name: login
+                  value: "789"
+              - column:
+                  name: password
+                  value: "$2a$12$chiMw/4Q7Ns6HzIT4XNbIugH2tFAWwXIvXHcbuE/5slVGLsItmG/2"
+              - column:
+                  name: email
+                  value: "nik55561@yandex.ru"
+              - column:
+                  name: address
+                  value: "адрес тут"
+              - column:
+                  name: cart_id
+                  value: "1"
+
+  - changeSet:
+      id: data_restaurant
+      author: n.gurev
+      changes:
+        - insert:
+            tableName: app_restaurant
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: name
+                  value: "Шаверма"
+              - column:
+                  name: address
+                  value: "за углом"
+
+        - insert:
+            tableName: app_restaurant
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: name
+                  value: "Столовка"
+              - column:
+                  name: address
+                  value: "в подвале"
+
+  - changeSet:
+      id: data_menu_item
+      author: n.gurev
+      changes:
+        - insert:
+            tableName: app_menu_item
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: name
+                  value: "Шаурма"
+              - column:
+                  name: price
+                  value: "150"
+              - column:
+                  name: restaurant_id
+                  value: "1"
+
+        - insert:
+            tableName: app_menu_item
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: name
+                  value: "Пита"
+              - column:
+                  name: price
+                  value: "170"
+              - column:
+                  name: restaurant_id
+                  value: "1"
+
+        - insert:
+            tableName: app_menu_item
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: name
+                  value: "Щи"
+              - column:
+                  name: price
+                  value: "130"
+              - column:
+                  name: restaurant_id
+                  value: "2"
+
+        - insert:
+            tableName: app_menu_item
+            columns:
+              - column:
+                  name: id
+                  value: "4"
+              - column:
+                  name: name
+                  value: "Салат"
+              - column:
+                  name: price
+                  value: "150"
+              - column:
+                  name: restaurant_id
+                  value: "2"

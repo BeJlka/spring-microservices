@@ -1,0 +1,98 @@
+databaseChangeLog:
+  - changeSet:
+      id: user_seq
+      author: n.gurev
+      changes:
+        - createSequence:
+            cacheSize: 1
+            cycle: false
+            dataType: bigint
+            incrementBy: 1
+            maxValue: 9223372036854775807
+            minValue: 1
+            sequenceName: user_seq
+            startValue: 2
+
+  - changeSet:
+      id: cart_seq
+      author: n.gurev
+      changes:
+        - createSequence:
+            cacheSize: 1
+            cycle: false
+            dataType: bigint
+            incrementBy: 1
+            maxValue: 9223372036854775807
+            minValue: 1
+            sequenceName: cart_seq
+            startValue: 2
+
+  - changeSet:
+      id: cart_item_seq
+      author: n.gurev
+      changes:
+        - createSequence:
+            cacheSize: 1
+            cycle: false
+            dataType: bigint
+            incrementBy: 1
+            maxValue: 9223372036854775807
+            minValue: 1
+            sequenceName: cartitem_seq
+            startValue: 1
+
+  - changeSet:
+      id: order_seq
+      author: n.gurev
+      changes:
+        - createSequence:
+            cacheSize: 1
+            cycle: false
+            dataType: bigint
+            incrementBy: 1
+            maxValue: 9223372036854775807
+            minValue: 1
+            sequenceName: order_seq
+            startValue: 1
+
+  - changeSet:
+      id: order_item_seq
+      author: n.gurev
+      changes:
+        - createSequence:
+            cacheSize: 1
+            cycle: false
+            dataType: bigint
+            incrementBy: 1
+            maxValue: 9223372036854775807
+            minValue: 1
+            sequenceName: orderitem_seq
+            startValue: 1
+
+  - changeSet:
+      id: menu_item_seq
+      author: n.gurev
+      changes:
+        - createSequence:
+            cacheSize: 1
+            cycle: false
+            dataType: bigint
+            incrementBy: 1
+            maxValue: 9223372036854775807
+            minValue: 1
+            sequenceName: menuitem_seq
+            startValue: 5
+
+  - changeSet:
+      id: restaurant_seq
+      author: n.gurev
+      changes:
+        - createSequence:
+            cacheSize: 1
+            cycle: false
+            dataType: bigint
+            incrementBy: 1
+            maxValue: 9223372036854775807
+            minValue: 1
+            sequenceName: restaurant_seq
+            startValue: 3

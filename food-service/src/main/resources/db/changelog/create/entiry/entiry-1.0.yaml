@@ -1,0 +1,190 @@
+databaseChangeLog:
+#  - logicalFilePath: db/chanhelog/db.changelog-master.yaml
+  - changeSet:
+      id: user_entity
+      author: n.gurev
+      changes:
+        - createTable:
+            tableName: app_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: login
+                  type: varchar(255)
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: address
+                  type: varchar(255)
+              - column:
+                  name: role
+                  type: varchar(25)
+              - column:
+                  name: password
+                  type: varchar(255)
+              - column:
+                  name: cart_id
+                  type: BIGINT
+
+  - changeSet:
+      id: cart_entity
+      author: n.gurev
+      changes:
+        - createTable:
+            tableName: app_cart
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+  - changeSet:
+      id: cart_item_entity
+      author: n.gurev
+      changes:
+        - createTable:
+            tableName: app_cart_item
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cart_id
+                  type: BIGINT
+              - column:
+                  name: count
+                  type: INTEGER
+              - column:
+                  name: menu_id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: price
+                  type: double
+              - column:
+                  name: restaurant_id
+                  type: BIGINT
+
+
+  - changeSet:
+      id: order_entity
+      author: n.gurev
+      changes:
+        - createTable:
+            tableName: app_order
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: address
+                  type: varchar(255)
+              - column:
+                  name: amount
+                  type: double
+              - column:
+                  name: delivery_date
+                  type: timestamp
+              - column:
+                  name: order_date
+                  type: timestamp
+              - column:
+                  name: status
+                  type: varchar(255)
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: restaurant_id
+                  type: BIGINT
+
+  - changeSet:
+      id: order_item_entity
+      author: n.gurev
+      changes:
+        - createTable:
+            tableName: app_order_item
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: count
+                  type: integer
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: order_id
+                  type: BIGINT
+              - column:
+                  name: price
+                  type: double
+              - column:
+                  name: restaurant_id
+                  type: BIGINT
+
+  - changeSet:
+      id: restaurant_entity
+      author: n.gurev
+      changes:
+        - createTable:
+            tableName: app_restaurant
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: address
+                  type: varchar(255)
+
+  - changeSet:
+      id: menu_item_entity
+      author: n.gurev
+      changes:
+        - createTable:
+            tableName: app_menu_item
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: price
+                  type: double
+              - column:
+                  name: restaurant_id
+                  type: BIGINT

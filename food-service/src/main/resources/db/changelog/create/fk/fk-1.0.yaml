@@ -1,0 +1,73 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_fk_to_user_entity
+      author: n.gurev
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: cart_id
+            baseTableName: app_user
+            constraintName: fk_user_cart_id
+            referencedTableName: app_cart
+            referencedColumnNames: id
+
+  - changeSet:
+      id: add_fk_to_cart_item_entity
+      author: n.gurev
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: cart_id
+            baseTableName: app_cart_item
+            constraintName: fk_cart_item_cart_id
+            referencedTableName: app_cart
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: app_cart_item
+            constraintName: fk_cart_item_restaurant_id
+            referencedTableName: app_restaurant
+            referencedColumnNames: id
+
+  - changeSet:
+      id: add_fk_to_menu_item_entity
+      author: n.gurev
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: app_menu_item
+            constraintName: fk_menu_iten_restaurant_id
+            referencedTableName: app_restaurant
+            referencedColumnNames: id
+
+  - changeSet:
+      id: add_fk_to_order_item_entity
+      author: n.gurev
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: order_id
+            baseTableName: app_order_item
+            constraintName: fk_order_item_order_id
+            referencedTableName: app_order
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: app_order_item
+            constraintName: fk_order_item_restaurant_id
+            referencedTableName: app_restaurant
+            referencedColumnNames: id
+
+  - changeSet:
+      id: add_fk_to_order_entity
+      author: n.gurev
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: app_order
+            constraintName: fk_order_user_id
+            referencedTableName: app_user
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseColumnNames: restaurant_id
+            baseTableName: app_order
+            constraintName: fk_order_restaurant_id
+            referencedTableName: app_restaurant
+            referencedColumnNames: id
